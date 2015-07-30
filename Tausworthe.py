@@ -14,9 +14,3 @@ class TauswortheRNG(object):
 
     def rand(self):
         return self.randi() * 2.3283064365387e-10
-
-
-if __name__ == '__main__':
-    t = TauswortheRNG(112339)
-    for i in range(1000000):
-        print(t.randi())

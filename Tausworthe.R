@@ -43,13 +43,3 @@ taus.randi <- function(t)
 {
 	return(t$randi())
 }
-
-test.randi <- function()
-{
-	t <- TauswortheRNG(seed=112339)
-	for (i in 1:1000000) {
-		cat(t$randi(), "\n")
-	}
-}
-
-test.randi()
