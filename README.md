@@ -27,21 +27,25 @@ build both shared libraries using:
 Then, in a Python script located in the same directory as `syncrng.so` and 
 `SyncRNG.py`, you can do:
 
-    from pysyncrng import SyncRNG
-    
-    s = SyncRNG(seed=123456)
-    for i in range(10):
-	print(s.randi())
+```python
+from SyncRNG import SyncRNG
+
+s = SyncRNG(seed=123456)
+for i in range(10):
+  print(s.randi())
+```
 
 Similarly, in an R script located in the same directory as `RSyncRNG.so` and 
 `SyncRNG.R`, you can do:
 
-    source('./SyncRNG.R')
-    
-    s = SyncRNG(seed=123456)
-    for (i in 1:10) {
+```R
+source('./SyncRNG.R')
+
+s = SyncRNG(seed=123456)
+for (i in 1:10) {
 	cat(s$randi(), '\n')
-    }
+}
+```
 
 You'll notice that the random numbers are indeed the same.
 
