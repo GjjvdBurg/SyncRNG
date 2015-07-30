@@ -18,8 +18,8 @@ be the same in both languages, provided the same seed is used.
 How
 ---
 
-In Python, the interface SyncRNG.py can be used as an importable module. In R, 
-it is adviced to simply source the 'SyncRNG.R' file. Before use, make sure to 
+In Python, the interface `SyncRNG.py` can be used as an importable module. In 
+R, it suffices to simply source the `SyncRNG.R` file. Before use, make sure to 
 build both shared libraries using:
 
     make
@@ -52,7 +52,7 @@ You'll notice that the random numbers are indeed the same.
 Notes
 -----
 
-Since R is not capable of reliable handling integers larger than `2^32 - 1`, 
+Since R is not capable of reliably handling integers larger than `2^32 - 1`, 
 the random numbers are internally capped at this value (using a bitwise and 
 with `0x7FFFFFF`), this influences the quality of the random numbers. The 
 random numbers are no longer uniformly distributed on `[0, 2^32 -1]`. For the 
