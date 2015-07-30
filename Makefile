@@ -14,5 +14,4 @@ R:
 
 clean:
 	rm -rf build
-	rm -f *.so *.o
-	rm *.pyc
+	rm -f *.so *.o *.pyc

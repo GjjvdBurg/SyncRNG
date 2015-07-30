@@ -15,9 +15,9 @@
  *
  * @details
  * This generates random numbers according to the process described in [1]. As 
- * an additional step, the state variables are capped to 0x7FFFFFFF using a 
- * bitwise and. This is to overcome limitations of R. On return, the state 
- * variables are updated.
+ * an additional step, the resulting random number is capped to 0xFFFFFFFF 
+ * using a bitwise and. This is done to yield the range [0, 2^32-1]. On 
+ * return, the state variables are updated.
  *
  * [1]: @article{l1996maximally,
  *   title={Maximally equidistributed combined Tausworthe generators},
@@ -34,7 +34,7 @@
  *
  * @return a generated random number
  */
-int lfsr113(int **state)
+unsigned long lfsr113(unsigned long **state)
 {
 	unsigned long z1, z2, z3, z4, b;
 
@@ -57,11 +57,12 @@ int lfsr113(int **state)
 
 	b = (z1 ^ z2 ^ z3 ^ z4);
 
-	(*state)[0] = z1 & 0x7FFFFFFF;
-	(*state)[1] = z2 & 0x7FFFFFFF;
-	(*state)[2] = z3 & 0x7FFFFFFF;
-	(*state)[3] = z4 & 0x7FFFFFFF;
-	b = b & 0x7FFFFFFF;
+	(*state)[0] = z1;
+	(*state)[1] = z2;
+	(*state)[2] = z3;
+	(*state)[3] = z4;
+
+	b = b & 0xFFFFFFFF;
 	
 	return(b);
 }
@@ -72,32 +73,36 @@ int lfsr113(int **state)
  * @details
  * This function seeds the state array using a supplied seed value. As noted 
  * in [1] (see lfsr113()), the values of z1, z2, z3, and z4 should be larger 
- * than 1, 7, 15, and 127 respectively. Here too the state variables are 
- * capped at 0x7FFFFFF.
+ * than 1, 7, 15, and 127 respectively.
  *
  * @param[in] seed 	user supplied seed value for the RNG
  * @param[out] state  	state of the RNG
  */
-void lfsr113_seed(unsigned long seed, int **state)
+void lfsr113_seed(unsigned long seed, unsigned long **state)
 {
 	unsigned long z1 = 2,
 		      z2 = 8,
 		      z3 = 16,
 		      z4 = 128;
 
-	z1 = (z1 * (seed + 1)) & 0x7FFFFFFF;
-	z2 = (z2 * (seed + 1)) & 0x7FFFFFFF;
-	z3 = (z3 * (seed + 1)) & 0x7FFFFFFF;
-	z4 = (z4 * (seed + 1)) & 0x7FFFFFFF;
+	z1 = (z1 * (seed + 1));
+	z2 = (z2 * (seed + 1));
+	z3 = (z3 * (seed + 1));
+	z4 = (z4 * (seed + 1));
+
+	z1 = (z1 > 1) ? z1 : z1 + 1;
+	z2 = (z2 > 7) ? z2 : z2 + 7;
+	z3 = (z3 > 15) ? z3 : z3 + 15;
+	z4 = (z4 > 127) ? z4 : z4 + 127;
 
 	if (*state == NULL) {
-		(*state) = malloc(sizeof(int)*4);
+		(*state) = malloc(sizeof(unsigned long)*4);
 	}
 
-	(*state)[0] = (int) z1;
-	(*state)[1] = (int) z2;
-	(*state)[2] = (int) z3;
-	(*state)[3] = (int) z4;
+	(*state)[0] = z1;
+	(*state)[1] = z2;
+	(*state)[2] = z3;
+	(*state)[3] = z4;
 }
 
 #ifdef TARGETPYTHON
@@ -109,13 +114,14 @@ void lfsr113_seed(unsigned long seed, int **state)
 
 static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 {
-	int seed, *state = NULL;
+	unsigned long seed, *state = NULL;
 
-	if (!PyArg_ParseTuple(args, "i", &seed))
+	if (!PyArg_ParseTuple(args, "k", &seed))
 		return NULL;
 
 	lfsr113_seed(seed, &state);
-	PyObject *pystate = Py_BuildValue("[i, i, i, i]",
+
+	PyObject *pystate = Py_BuildValue("[k, k, k, k]",
 		       	state[0], state[1], state[2], state[3]);
 	free(state);
 	return pystate;
@@ -123,7 +129,7 @@ static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 
 static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 {
-	int i, value, numints, *localstate;
+	unsigned long i, value, numints, *localstate;
 
 	PyObject *listObj;
 	PyObject *intObj;
@@ -132,18 +138,18 @@ static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 		return NULL;
 
 	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(int)*5);
+	localstate = malloc(sizeof(unsigned long)*5);
 	numints = PyList_Size(listObj);
 	for (i=0; i<numints; i++) {
 		intObj = PyList_GetItem(listObj, i);
-		value = (int) PyLong_AsLong(intObj);
+		value = (unsigned long) PyLong_AsLong(intObj);
 		localstate[i] = value;
 	}
 
-	int rand = lfsr113(&localstate);
+	unsigned long rand = lfsr113(&localstate);
 	localstate[4] = rand;
 
-	PyObject *pystate = Py_BuildValue("[i, i, i, i, i]",
+	PyObject *pystate = Py_BuildValue("[k, k, k, k, k]",
 		       	localstate[0], localstate[1], localstate[2],
 			localstate[3], rand);
 	free(localstate);
@@ -175,18 +181,20 @@ PyMODINIT_FUNC initsyncrng(void)
  */
 SEXP R_syncrng_seed(SEXP seed)
 {
-	int i, *pstate = NULL, *state = NULL;
-	int *pseed = INTEGER(seed);
+	int i;
+	double *pseed = REAL(seed),
+	       *pstate = NULL;
+	unsigned long useed = (unsigned long) *pseed;
+	unsigned long *state = NULL;
 
-	SEXP Rstate = PROTECT(allocVector(INTSXP, 5));
-	pstate = INTEGER(Rstate);
+	lfsr113_seed(useed, &state);
 
-	lfsr113_seed(*pseed, &state);
-
+	SEXP Rstate = PROTECT(allocVector(REALSXP, 5));
+	pstate = REAL(Rstate);
 	for (i=0; i<4; i++) {
-		pstate[i] = state[i];
+		pstate[i] = (double) state[i];
 	}
-	pstate[4] = -1;
+	pstate[4] = -1.0;
 	free(state);
 
 	UNPROTECT(1);
@@ -195,20 +203,22 @@ SEXP R_syncrng_seed(SEXP seed)
 
 SEXP R_syncrng_rand(SEXP state)
 {
-	int *localstate = malloc(sizeof(int)*4);
-	int *pstate = INTEGER(state);
+	unsigned long *localstate = malloc(sizeof(unsigned long)*4);
+	double *pstate = REAL(state);
 	int i;
-	for (i=0; i<4; i++)
-		localstate[i] = pstate[i];
+	for (i=0; i<4; i++) {
+		localstate[i] = (unsigned long) pstate[i];
+	}
 
-	int rand = lfsr113(&localstate);
+	unsigned long rand = lfsr113(&localstate);
 	
-	SEXP Rstate = PROTECT(allocVector(INTSXP, 5));
-	pstate = INTEGER(Rstate);
+	SEXP Rstate = PROTECT(allocVector(REALSXP, 5));
+	pstate = REAL(Rstate);
 
-	for (i=0; i<4; i++)
-		pstate[i] = localstate[i];
-	pstate[4] = rand;
+	for (i=0; i<4; i++) {
+		pstate[i] = (double) localstate[i];
+	}
+	pstate[4] = (double) rand;
 	UNPROTECT(1);
 
 	free(localstate);

@@ -11,13 +11,13 @@ SyncRNG <- setRefClass('SyncRNG',
 		initialize=function(..., seed=0) {
 			seed <<- seed
 			tmp <- .Call('R_syncrng_seed',
-			     as.integer(seed))
+			     as.numeric(seed))
 			state <<- tmp[1:4]
 			callSuper(...)
 		},
 		randi=function() {
 			tmp <- .Call('R_syncrng_rand',
-				     as.integer(state))
+				     as.numeric(state))
 			state <<- tmp[1:4]
 			return(tmp[5])
 		},

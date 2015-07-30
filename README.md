@@ -52,18 +52,11 @@ You'll notice that the random numbers are indeed the same.
 Notes
 -----
 
-Since R is not capable of reliably handling integers larger than `2^32 - 1`, 
-the random numbers are internally capped at this value (using a bitwise and 
-with `0x7FFFFFF`), this influences the quality of the random numbers. The 
-random numbers are no longer uniformly distributed on `[0, 2^32 -1]`. For the 
-intended use of SyncRNG this is not a problem, but it is a compromise worth 
-considering when using SyncRNG. SyncRNG should definitely not be used for any 
-cryptographic purposes.
+The random numbers are uniformly distributed on `[0, 2^32 - 1]`.
 
 
 TODO
 ----
 
-Future versions may include a random number generator that does not need 
-capping, and is uniform. It may also provide easier system-wide installation 
-through an R package and a Python module.
+It may be easier to provide system-wide installation through an R package and 
+a Python module.
