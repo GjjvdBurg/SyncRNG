@@ -25,7 +25,7 @@ build both shared libraries using:
     make
 
 Then, in a Python script located in the same directory as `syncrng.so` and 
-`pysyncrng.py`, you can do:
+`SyncRNG.py`, you can do:
 
     from pysyncrng import SyncRNG
     
@@ -33,10 +33,10 @@ Then, in a Python script located in the same directory as `syncrng.so` and
     for i in range(10):
 	print(s.randi())
 
-Similarly, in an R script located in the same directory as `Rsyncrng.so` and 
-`Rsyncrng.R`, you can do:
+Similarly, in an R script located in the same directory as `RSyncRNG.so` and 
+`SyncRNG.R`, you can do:
 
-    source('./Rsyncrng.R')
+    source('./SyncRNG.R')
     
     s = SyncRNG(seed=123456)
     for (i in 1:10) {
@@ -55,3 +55,11 @@ random numbers are no longer uniformly distributed on `[0, 2^32 -1]`. For the
 intended use of SyncRNG this is not a problem, but it is a compromise worth 
 considering when using SyncRNG. SyncRNG should definitely not be used for any 
 cryptographic purposes.
+
+
+TODO
+----
+
+Future versions may include a random number generator that does not need 
+capping, and is uniform. It may also provide easier system-wide installation 
+through an R package and a Python module.

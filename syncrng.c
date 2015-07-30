@@ -10,6 +10,30 @@
 #include <Rinternals.h>
 #endif
 
+/**
+ * @brief Generate a single random number using the capped Tausworthe RNG
+ *
+ * @details
+ * This generates random numbers according to the process described in [1]. As 
+ * an additional step, the state variables are capped to 0x7FFFFFFF using a 
+ * bitwise and. This is to overcome limitations of R. On return, the state 
+ * variables are updated.
+ *
+ * [1]: @article{l1996maximally,
+ *   title={Maximally equidistributed combined Tausworthe generators},
+ *   author={L’ecuyer, Pierre},
+ *   journal={Mathematics of Computation of the American Mathematical 
+ *   Society},
+ *   volume={65},
+ *   number={213},
+ *   pages={203--213},
+ *   year={1996}
+ *   }
+ *
+ * @param[in,out] state 	pointer to current state array
+ *
+ * @return a generated random number
+ */
 int lfsr113(int **state)
 {
 	unsigned long z1, z2, z3, z4, b;
@@ -42,6 +66,18 @@ int lfsr113(int **state)
 	return(b);
 }
 
+/**
+ * @brief Seed the Tausworthe RNG using a seed value
+ *
+ * @details
+ * This function seeds the state array using a supplied seed value. As noted 
+ * in [1] (see lfsr113()), the values of z1, z2, z3, and z4 should be larger 
+ * than 1, 7, 15, and 127 respectively. Here too the state variables are 
+ * capped at 0x7FFFFFF.
+ *
+ * @param[in] seed 	user supplied seed value for the RNG
+ * @param[out] state  	state of the RNG
+ */
 void lfsr113_seed(unsigned long seed, int **state)
 {
 	unsigned long z1 = 2,
@@ -71,10 +107,7 @@ void lfsr113_seed(unsigned long seed, int **state)
  *
  */
 
-static char module_docstring[] = 
-"This module provides the Tausworthe RNG for R and Python simultaneously";
-
-static PyObject *taus_seed(PyObject *self, PyObject *args)
+static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 {
 	int seed, *state = NULL;
 
@@ -88,7 +121,7 @@ static PyObject *taus_seed(PyObject *self, PyObject *args)
 	return pystate;
 }
 
-static PyObject *taus_rand(PyObject *self, PyObject *args)
+static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 {
 	int i, value, numints, *localstate;
 
@@ -117,17 +150,18 @@ static PyObject *taus_rand(PyObject *self, PyObject *args)
 	return pystate;
 }
 
-static PyMethodDef TausMethods[] = {
-	{"seed", taus_seed, METH_VARARGS,
-		"Seed the Tausworthe RNG."},
-	{"rand", taus_rand, METH_VARARGS,
-		"Generate a single random integer."},
+static PyMethodDef SyncRNGMethods[] = {
+	{"seed", syncrng_seed, METH_VARARGS,
+		"Seed the RNG."},
+	{"rand", syncrng_rand, METH_VARARGS,
+		"Generate a single random integer using SyncRNG."},
 	{NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC inittaus(void)
+PyMODINIT_FUNC initsyncrng(void)
 {
-	PyObject *m = Py_InitModule3("taus", TausMethods, module_docstring);
+	PyObject *m = Py_InitModule3("syncrng", SyncRNGMethods,
+		       	"Python interface to SyncRNG");
 	if (m == NULL)
 		return;
 }
@@ -139,7 +173,7 @@ PyMODINIT_FUNC inittaus(void)
  * Start of R code
  *
  */
-SEXP R_tausworthe_seed(SEXP seed)
+SEXP R_syncrng_seed(SEXP seed)
 {
 	int i, *pstate = NULL, *state = NULL;
 	int *pseed = INTEGER(seed);
@@ -159,7 +193,7 @@ SEXP R_tausworthe_seed(SEXP seed)
 	return Rstate;
 }
 
-SEXP R_tausworthe_rand(SEXP state)
+SEXP R_syncrng_rand(SEXP state)
 {
 	int *localstate = malloc(sizeof(int)*4);
 	int *pstate = INTEGER(state);

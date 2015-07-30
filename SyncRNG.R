@@ -1,8 +1,8 @@
 library(methods)
 
-dyn.load('tausR.so')
+dyn.load('RSyncRNG.so')
 
-TauswortheRNG <- setRefClass('TauswortheRNG',
+SyncRNG <- setRefClass('SyncRNG',
 	fields=list(
 		    seed='numeric',
 		    state='numeric'
@@ -10,13 +10,13 @@ TauswortheRNG <- setRefClass('TauswortheRNG',
 	methods=list(
 		initialize=function(..., seed=0) {
 			seed <<- seed
-			tmp <- .Call('R_tausworthe_seed',
+			tmp <- .Call('R_syncrng_seed',
 			     as.integer(seed))
 			state <<- tmp[1:4]
 			callSuper(...)
 		},
 		randi=function() {
-			tmp <- .Call('R_tausworthe_rand',
+			tmp <- .Call('R_syncrng_rand',
 				     as.integer(state))
 			state <<- tmp[1:4]
 			return(tmp[5])
@@ -27,19 +27,3 @@ TauswortheRNG <- setRefClass('TauswortheRNG',
 		}
 		)
 	)
-
-taus.seed <- function(seed=0)
-{
-	t <- TauswortheRNG(seed=seed)
-	return(t)
-}
-
-taus.rand <- function(t)
-{
-	return(t$rand())
-}
-
-taus.randi <- function(t)
-{
-	return(t$randi())
-}

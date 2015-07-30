@@ -1,4 +1,6 @@
 PYTHON=python2
+RLIB=RSyncRNG.so
+CFILE=syncrng.c
 
 .PHONY: all clean
 
@@ -8,10 +10,9 @@ python:
 	$(PYTHON) setup.py build_ext --inplace
 
 R:
-	R CMD SHLIB -o tausR.so taus.c
+	R CMD SHLIB -o $(RLIB) $(CFILE)
 
 clean:
 	rm -rf build
-	rm -f taus.so
-	rm -f tausR.so
-	rm -f taus.o
+	rm -f *.so *.o
+	rm *.pyc

@@ -2,18 +2,18 @@
 from distutils.core import setup, Extension
 
 """
-module1 = Extension('taus',
+module1 = Extension('syncrng',
         define_macros = [('TARGETPYTHON', '1')],
-        sources=['taus.c'])
+        sources=['syncrng.c'])
 
-setup (name = 'Tausworthe RNG',
+setup (name = 'SyncRNG',
         version = '0.1',
-        description='The Tausworthe RNG for Python and R',
+        description='A synchronized Tausworthe RNG for Python and R',
         ext_modules = [module1])
 """
 
 setup(
-        ext_modules=[Extension("taus",
+        ext_modules=[Extension("syncrng",
             define_macros=[('TARGETPYTHON', '1')],
-            sources=["taus.c"])],
+            sources=["syncrng.c"])],
         )
