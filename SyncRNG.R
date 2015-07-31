@@ -1,6 +1,9 @@
 library(methods)
 
-script.dir <- normalizePath(dirname(sys.frame(1)$ofile))
+frame.files <- lapply(sys.frames(), function(x) x$ofile)
+frame.files <- Filter(Negate(is.null), frame.files)
+
+script.dir <- normalizePath(dirname(frame.files[[length(frame.files)]]))
 source.file <- paste(script.dir, '/', 'RSyncRNG.so', sep='')
 
 dyn.load(source.file)
