@@ -1,0 +1,3 @@
+useDynLib(SyncRNG)
+export(SyncRNG)
+import(methods)

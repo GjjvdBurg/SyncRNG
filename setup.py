@@ -7,12 +7,13 @@ setup(
         version='0.1',
         description='A synchronized Tausworthe RNG for Python and R',
         license='GPL v2',
-        py_modules=['SyncRNG'],
+        package_dir={'': 'Python'},
+        packages=[''],
         ext_modules=[
             Extension(
                 "syncrng",
                 define_macros=[('TARGETPYTHON', '1')],
-                sources=["syncrng.c"]
+                sources=["src/syncrng.c"]
                 )
             ],
         )

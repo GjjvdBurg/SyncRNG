@@ -1,22 +1,24 @@
 library(methods)
 
-frame.files <- lapply(sys.frames(), function(x) x$ofile)
-frame.files <- Filter(Negate(is.null), frame.files)
-
-script.dir <- normalizePath(dirname(frame.files[[length(frame.files)]]))
-source.file <- paste(script.dir, '/', 'RSyncRNG.so', sep='')
-
-dyn.load(source.file)
-
+#' A Reference Class for SyncRNG
+#'
+#' @field seed The seed for the random number generator
+#' @field state The current state of the RNG, should not be modified by the 
+#' user
+#'
+#' @examples
+#' s = SyncRNG(seed=123456)
+#' for (i in 1:10)
+#'   cat(s$randi(), '\n')
+#'
 SyncRNG <- setRefClass('SyncRNG',
 	fields=list(
 		    seed='numeric',
-		    state='numeric',
-		    BPF='numeric'
+		    state='numeric'
 		    ),
 	methods=list(
 		initialize=function(..., seed=0) {
-			BPF <<- 32
+			"Initialize the RNG using the C function R_syncrng_seed"
 			seed <<- seed
 			tmp <- .Call('R_syncrng_seed',
 			     as.numeric(seed))
@@ -24,17 +26,20 @@ SyncRNG <- setRefClass('SyncRNG',
 			callSuper(...)
 		},
 		randi=function() {
+			"Generate a single random 32-bit integer"
 			tmp <- .Call('R_syncrng_rand',
 				     as.numeric(state))
 			state <<- tmp[1:4]
 			return(tmp[5])
 		},
 		rand=function() {
+			"Generate a single random float in the range [0, 1)"
 			r <- randi()
 			return (r * 2.3283064365387e-10)
 		},
 		randbelow=function(n) {
-			maxsize <- 2^BPF
+			"Generate a random integer below a given number"
+			maxsize <- 2^32
 			if (n >= maxsize) {
 				warning(paste("Underlying random generator ",
 					     "does not supply\n enough bits ",
@@ -50,6 +55,7 @@ SyncRNG <- setRefClass('SyncRNG',
 			return(round(r*maxsize) %% n)
 		},
 		shuffle=function(x) {
+			"Randomly shuffle a provided array of values"
 			y <- x
 			for (i in rev(1:(length(y)-1))) {
 				j <- randbelow(i+1)
