@@ -9,7 +9,7 @@ def test_randi():
 def test_rand():
     s = SyncRNG(seed=123456)
     for i in range(5):
-        print(s.rand())
+        print('%.16f' % s.rand())
 
 def test_randbelow():
     s = SyncRNG(seed=123456)

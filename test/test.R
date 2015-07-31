@@ -1,5 +1,4 @@
-
-source('./SyncRNG.R')
+library(SyncRNG)
 
 test.randi <- function()
 {
@@ -12,7 +11,7 @@ test.rand <- function()
 {
 	s <- SyncRNG(seed=123456)
 	for (i in 1:5)
-		cat(s$rand(), '\n')
+		cat(sprintf('%.16f\n', s$rand()))
 }
 
 test.randbelow <- function()
@@ -29,7 +28,7 @@ test.shuffle <- function()
 	for (i in 1:5) {
 		y <- s$shuffle(x)
 		x <- y
-		cat(y, '\n')
+		cat('[', paste(y, collapse=', '), ']\n', sep='')
 	}
 }
 
