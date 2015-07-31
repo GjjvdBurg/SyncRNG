@@ -1,6 +1,9 @@
 library(methods)
 
-dyn.load('RSyncRNG.so')
+script.dir <- normalizePath(dirname(sys.frame(1)$ofile))
+source.file <- paste(script.dir, '/', 'RSyncRNG.so', sep='')
+
+dyn.load(source.file)
 
 SyncRNG <- setRefClass('SyncRNG',
 	fields=list(
