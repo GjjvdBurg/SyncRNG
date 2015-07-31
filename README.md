@@ -49,6 +49,20 @@ for (i in 1:10) {
 
 You'll notice that the random numbers are indeed the same.
 
+Installation
+------------
+
+The Python module can be installed locally for the user using:
+
+```sh
+python setup.py install --user
+```
+or system-wide through:
+
+```sh
+sudo python setup.py install
+```
+
 Notes
 -----
 
