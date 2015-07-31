@@ -18,14 +18,9 @@ be the same in both languages, provided the same seed is used.
 How
 ---
 
-In Python, the interface `SyncRNG.py` can be used as an importable module. In 
-R, it suffices to simply source the `SyncRNG.R` file. Before use, make sure to 
-build both shared libraries using:
-
-    make
-
-Then, in a Python script located in the same directory as `syncrng.so` and 
-`SyncRNG.py`, you can do:
+First install the packages as stated under Installation. Then, in a Python 
+script located in the same directory as `syncrng.so` and `SyncRNG.py`, you can 
+do:
 
 ```python
 from SyncRNG import SyncRNG
@@ -52,7 +47,15 @@ You'll notice that the random numbers are indeed the same.
 Installation
 ------------
 
-The Python module can be installed locally for the user using:
+Installing the R package can be done through devtools:
+
+```R
+library(devtools)
+devtools::install_github("GjjvdBurg/SyncRNG")
+```
+
+To install SyncRNG as a Python module, first clone the repository. The Python 
+module can then be installed locally for the user using:
 
 ```sh
 python setup.py install --user
