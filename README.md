@@ -34,7 +34,7 @@ Similarly, in an R script located in the same directory as `RSyncRNG.so` and
 `SyncRNG.R`, you can do:
 
 ```R
-source('./SyncRNG.R')
+library(SyncRNG)
 
 s = SyncRNG(seed=123456)
 for (i in 1:10) {
