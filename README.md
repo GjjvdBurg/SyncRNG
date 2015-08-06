@@ -18,9 +18,8 @@ be the same in both languages, provided the same seed is used.
 How
 ---
 
-First install the packages as stated under Installation. Then, in a Python 
-script located in the same directory as `syncrng.so` and `SyncRNG.py`, you can 
-do:
+First install the packages as stated under Installation. Then, in Python you 
+can do:
 
 ```python
 from SyncRNG import SyncRNG
@@ -30,8 +29,7 @@ for i in range(10):
   print(s.randi())
 ```
 
-Similarly, in an R script located in the same directory as `RSyncRNG.so` and 
-`SyncRNG.R`, you can do:
+Similarly, after installing the R library you can do in R:
 
 ```R
 library(SyncRNG)
@@ -66,14 +64,20 @@ or system-wide through:
 sudo python setup.py install
 ```
 
+Usage
+-----
+
+In both R and Python the following methods are available for the `SyncRNG` 
+class:
+
+1. `randi()`: generate a random integer on the interval [0, 2^32).
+2. `rand()`: generate a random floating point number on the interval [0.0, 
+   1.0)
+3. `randbelow(n)`: generate a random integer below a given integer `n`.
+4. `shuffle(x)`: generate a permutation of a given list of numbers `x`.
+
 Notes
 -----
 
 The random numbers are uniformly distributed on `[0, 2^32 - 1]`.
 
-
-TODO
-----
-
-It may be easier to provide system-wide installation through an R package and 
-a Python module.

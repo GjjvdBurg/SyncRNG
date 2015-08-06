@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 setup(
         name='SyncRNG',
         author='Gertjan van den Burg',
-        version='0.1',
+        version='1.0',
         description='A synchronized Tausworthe RNG for Python and R',
         license='GPL v2',
         package_dir={'': 'Python'},
