@@ -6,6 +6,7 @@ used to seed and pull numbers from the RNG.
 
 from __future__ import division
 
+from copy import deepcopy
 from warnings import warn as _warn
 
 import syncrng
@@ -40,7 +41,7 @@ class SyncRNG(object):
         return int(r*maxsize) % n
 
     def shuffle(self, x):
-        y = x[:]
+        y = deepcopy(x)
         for i in reversed(range(1, len(y))):
             j = self.randbelow(i+1)
             y[i], y[j] = y[j], y[i]

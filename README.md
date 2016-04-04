@@ -34,7 +34,7 @@ Similarly, after installing the R library you can do in R:
 ```R
 library(SyncRNG)
 
-s = SyncRNG(seed=123456)
+s <- SyncRNG(seed=123456)
 for (i in 1:10) {
 	cat(s$randi(), '\n')
 }
