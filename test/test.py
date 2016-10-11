@@ -1,34 +1,48 @@
 
+from __future__ import division
+
+import unittest
+
 from SyncRNG import SyncRNG
 
-def test_randi():
-    s = SyncRNG(seed=123456)
-    for i in range(5):
-        print(s.randi())
+class SyncRNGTestCase(unittest.TestCase):
 
-def test_rand():
-    s = SyncRNG(seed=123456)
-    for i in range(5):
-        print('%.16f' % s.rand())
+    def test_randi(self):
+        s = SyncRNG(seed=123456)
+        self.assertEqual(s.randi(), 959852049)
+        self.assertEqual(s.randi(), 2314333085)
+        self.assertEqual(s.randi(), 2255782734)
+        self.assertEqual(s.randi(), 2921461239)
+        self.assertEqual(s.randi(), 1024197102)
 
-def test_randbelow():
-    s = SyncRNG(seed=123456)
-    for i in range(5):
-        print(s.randbelow(i+1))
+    def test_rand(self):
+        s = SyncRNG(seed=123456)
+        self.assertAlmostEqual(s.rand(), 959852049/pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 2314333085/pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 2255782734/pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 2921461239/pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 1024197102/pow(2, 32))
 
-def test_shuffle():
-    s = SyncRNG(seed=123456)
-    x = [1, 2, 3, 4, 5]
-    for i in range(5):
+    def test_randbelow(self):
+        s = SyncRNG(seed=123456)
+        self.assertEqual(s.randbelow(5), 4)
+        self.assertEqual(s.randbelow(5), 0)
+        self.assertEqual(s.randbelow(5), 4)
+        self.assertEqual(s.randbelow(5), 4)
+        self.assertEqual(s.randbelow(5), 2)
+
+    def test_shuffle(self):
+        s = SyncRNG(seed=123456)
+        x = [1, 2, 3, 4, 5]
         y = s.shuffle(x)
-        x = y
-        print(y)
+        self.assertEqual(y, [3, 4, 1, 2, 5])
 
-def main():
-    test_randi()
-    test_rand()
-    test_randbelow()
-    test_shuffle()
+    def test_first_1000(self):
+        s = SyncRNG(seed=0)
+        with open("./test/first_1000_seed_0.txt", "r") as fid:
+            for line in fid:
+                exp = int(line.strip())
+                self.assertTrue(exp == s.randi())
 
 if __name__ == '__main__':
-    main()
+    unittest.main()
