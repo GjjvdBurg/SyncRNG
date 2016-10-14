@@ -30,7 +30,7 @@ user}
 \item{\code{shuffle(x)}}{Randomly shuffle a provided array of values}
 }}
 \examples{
-s = SyncRNG(seed=123456)
+s <- SyncRNG(seed=123456)
 for (i in 1:10)
   cat(s$randi(), '\\n')
 }

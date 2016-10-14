@@ -7,7 +7,7 @@ library(methods)
 #' user
 #'
 #' @examples
-#' s = SyncRNG(seed=123456)
+#' s <- SyncRNG(seed=123456)
 #' for (i in 1:10)
 #'   cat(s$randi(), '\n')
 #'
