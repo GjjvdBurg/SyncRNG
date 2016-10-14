@@ -1,5 +1,5 @@
 Package: SyncRNG
-Version: 1.1.0
+Version: 1.1.1
 Date: 2016-10-12
 Title: A Synchronized Tausworthe RNG for R and Python
 Author: Gertjan van den Burg <gertjanvandenburg@gmail.com>
