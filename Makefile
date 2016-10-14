@@ -39,7 +39,6 @@ clean: ## Clean build dist and egg directories left after install
 	rm -rf *.so
 	rm -f MANIFEST
 	rm -f .coverage
-	rm -f README.txt
 
 develop: ## Install a development version of the package needed for testing
 	python setup.py develop --user

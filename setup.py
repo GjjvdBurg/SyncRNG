@@ -12,16 +12,14 @@ from distutils.extension import Extension
 
 here = path.abspath(path.dirname(__file__))
 
-with open(path.join(here, 'README.md'), 'r') as f:
+with open(path.join(here, 'README.rst'), 'r') as f:
     long_description = f.read()
-    with open(path.join(here, 'README.txt'), 'w') as o:
-        o.write(long_description)
 
 setup(
         name='SyncRNG',
         author='Gertjan van den Burg',
         author_email='gertjanvandenburg@gmail.com',
-        version='1.1.0',
+        version='1.1.1',
         description='A synchronized Tausworthe RNG for Python and R',
         long_description=long_description,
         url='https://github.com/GjjvdBurg/SyncRNG',
