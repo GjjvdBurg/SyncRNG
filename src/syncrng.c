@@ -1,9 +1,11 @@
 #ifdef TARGETPYTHON
+#include <stdint.h>
 #include "Python.h"
 #endif
 
 #ifndef TARGETPYTHON
 #define STRICT_R_HEADERS
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <R.h>
@@ -34,9 +36,9 @@
  *
  * @return a generated random number
  */
-unsigned long lfsr113(unsigned long **state)
+uint64_t lfsr113(uint64_t **state)
 {
-	unsigned long z1, z2, z3, z4, b;
+	uint64_t z1, z2, z3, z4, b;
 
 	z1 = (*state)[0];
 	z2 = (*state)[1];
@@ -63,7 +65,7 @@ unsigned long lfsr113(unsigned long **state)
 	(*state)[3] = z4;
 
 	b = b & 0xFFFFFFFF;
-	
+
 	return(b);
 }
 
@@ -78,9 +80,9 @@ unsigned long lfsr113(unsigned long **state)
  * @param[in] seed 	user supplied seed value for the RNG
  * @param[out] state  	state of the RNG
  */
-void lfsr113_seed(unsigned long seed, unsigned long **state)
+void lfsr113_seed(uint64_t seed, uint64_t **state)
 {
-	unsigned long z1 = 2,
+	uint64_t z1 = 2,
 		      z2 = 8,
 		      z3 = 16,
 		      z4 = 128;
@@ -96,7 +98,7 @@ void lfsr113_seed(unsigned long seed, unsigned long **state)
 	z4 = (z4 > 127) ? z4 : z4 + 127;
 
 	if (*state == NULL) {
-		(*state) = malloc(sizeof(unsigned long)*4);
+		(*state) = malloc(sizeof(uint64_t)*4);
 	}
 
 	(*state)[0] = z1;
@@ -114,7 +116,7 @@ void lfsr113_seed(unsigned long seed, unsigned long **state)
 
 static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 {
-	unsigned long seed, *state = NULL;
+	uint64_t seed, *state = NULL;
 
 	if (!PyArg_ParseTuple(args, "k", &seed))
 		return NULL;
@@ -129,7 +131,7 @@ static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 
 static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 {
-	unsigned long i, value, numints, *localstate;
+	uint64_t i, value, numints, *localstate;
 
 	PyObject *listObj;
 	PyObject *intObj;
@@ -138,15 +140,15 @@ static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 		return NULL;
 
 	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(unsigned long)*5);
+	localstate = malloc(sizeof(uint64_t)*5);
 	numints = PyList_Size(listObj);
 	for (i=0; i<numints; i++) {
 		intObj = PyList_GetItem(listObj, i);
-		value = (unsigned long) PyLong_AsLong(intObj);
+		value = (uint64_t) PyLong_AsLong(intObj);
 		localstate[i] = value;
 	}
 
-	unsigned long rand = lfsr113(&localstate);
+	uint64_t rand = lfsr113(&localstate);
 	localstate[4] = rand;
 
 	PyObject *pystate = Py_BuildValue("[k, k, k, k, k]",
@@ -220,8 +222,8 @@ SEXP R_syncrng_seed(SEXP seed)
 	int i;
 	double *pseed = REAL(seed),
 	       *pstate = NULL;
-	unsigned long useed = (unsigned long) *pseed;
-	unsigned long *state = NULL;
+	uint64_t useed = (uint64_t) *pseed;
+	uint64_t *state = NULL;
 
 	lfsr113_seed(useed, &state);
 
@@ -239,15 +241,15 @@ SEXP R_syncrng_seed(SEXP seed)
 
 SEXP R_syncrng_rand(SEXP state)
 {
-	unsigned long *localstate = malloc(sizeof(unsigned long)*4);
+	uint64_t *localstate = malloc(sizeof(uint64_t)*4);
 	double *pstate = REAL(state);
 	int i;
 	for (i=0; i<4; i++) {
-		localstate[i] = (unsigned long) pstate[i];
+		localstate[i] = (uint64_t) pstate[i];
 	}
 
-	unsigned long rand = lfsr113(&localstate);
-	
+	uint64_t rand = lfsr113(&localstate);
+
 	SEXP Rstate = PROTECT(allocVector(REALSXP, 5));
 	pstate = REAL(Rstate);
 
