@@ -11,7 +11,7 @@ numbers in both R and Python programs. Although both languages implement a
 Mersenne-Twister RNG, the implementations are so different that it is not 
 possible to get the same random numbers with the same seed.
 
-SyncRNG is a Tausworthe RNG implemented in `syncrng.c`, and linked to both R 
+SyncRNG is a Tausworthe RNG implemented in ``syncrng.c``, and linked to both R 
 and Python. Since both use the same underlying C code, the random numbers will 
 be the same in both languages, provided the same seed is used.
 
@@ -53,18 +53,18 @@ The Python package can be installed using pip::
 Usage
 =====
 
-In both R and Python the following methods are available for the `SyncRNG` 
+In both R and Python the following methods are available for the ``SyncRNG`` 
 class:
 
-1. `randi()`: generate a random integer on the interval [0, 2^32).
-2. `rand()`: generate a random floating point number on the interval [0.0, 
+1. ``randi()``: generate a random integer on the interval [0, 2^32).
+2. ``rand()``: generate a random floating point number on the interval [0.0, 
    1.0)
-3. `randbelow(n)`: generate a random integer below a given integer `n`.
-4. `shuffle(x)`: generate a permutation of a given list of numbers `x`.
+3. ``randbelow(n)``: generate a random integer below a given integer ``n``.
+4. ``shuffle(x)``: generate a permutation of a given list of numbers ``x``.
 
 Notes
 =====
 
-The random numbers are uniformly distributed on `[0, 2^32 - 1]`.
+The random numbers are uniformly distributed on ``[0, 2^32 - 1]``.
 
 
