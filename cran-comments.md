@@ -1,3 +1,8 @@
+## Resubmission
+This is a resubmission. In this version I have:
+* removed the LICENSE file
+* updated the DESCRIPTION to state "License: GPL-2"
+
 ## Test environments
 * local Arch Linux install, R 3.3.1
 * win-builder (devel and release)
@@ -11,6 +16,4 @@ There was 1 NOTE:
   Maintainer: ‘Gertjan van den Burg <gertjanvandenburg@gmail.com>’
 
   New submission
-
-  Non-FOSS package license (file LICENSE)
 

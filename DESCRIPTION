@@ -7,7 +7,7 @@ Maintainer: Gertjan van den Burg <gertjanvandenburg@gmail.com>
 Depends:
     R (>= 3.0.0)
 Description: Random number generation designed for cross-language usage.
-License: file LICENSE
+License: GPL-2
 Imports:
     methods
 Suggests:
