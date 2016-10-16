@@ -19,7 +19,7 @@ setup(
         name='SyncRNG',
         author='Gertjan van den Burg',
         author_email='gertjanvandenburg@gmail.com',
-        version='1.1.1',
+        version='1.2.1',
         description='A synchronized Tausworthe RNG for Python and R',
         long_description=long_description,
         url='https://github.com/GjjvdBurg/SyncRNG',
