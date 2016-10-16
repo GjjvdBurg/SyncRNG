@@ -1,6 +1,6 @@
 #ifdef TARGETPYTHON
-#include <stdint.h>
 #include "Python.h"
+#include <stdint.h>
 #endif
 
 #ifndef TARGETPYTHON
