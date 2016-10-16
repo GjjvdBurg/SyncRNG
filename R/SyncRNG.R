@@ -6,6 +6,11 @@ library(methods)
 #' @field state The current state of the RNG, should not be modified by the 
 #' user
 #'
+#' @useDynLib SyncRNG
+#' @export SyncRNG
+#' @exportClass SyncRNG
+#' @importFrom methods new
+#'
 #' @examples
 #' s <- SyncRNG(seed=123456)
 #' for (i in 1:10)
