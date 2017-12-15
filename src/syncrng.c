@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <R.h>
 #include <Rinternals.h>
+#include <R_ext/Random.h>
 #endif
 
 /**
@@ -36,9 +37,10 @@
  *
  * @return a generated random number
  */
-uint64_t lfsr113(uint64_t **state)
+uint32_t lfsr113(uint64_t **state)
 {
-	uint64_t z1, z2, z3, z4, b;
+	uint64_t z1, z2, z3, z4;
+	uint64_t b;
 
 	z1 = (*state)[0];
 	z2 = (*state)[1];
@@ -66,7 +68,7 @@ uint64_t lfsr113(uint64_t **state)
 
 	b = b & 0xFFFFFFFF;
 
-	return(b);
+	return((uint32_t) b);
 }
 
 /**
@@ -80,12 +82,12 @@ uint64_t lfsr113(uint64_t **state)
  * @param[in] seed 	user supplied seed value for the RNG
  * @param[out] state  	state of the RNG
  */
-void lfsr113_seed(uint64_t seed, uint64_t **state)
+void lfsr113_seed(uint32_t seed, uint64_t **state)
 {
 	uint64_t z1 = 2,
-		      z2 = 8,
-		      z3 = 16,
-		      z4 = 128;
+		 z2 = 8,
+		 z3 = 16,
+		 z4 = 128;
 
 	z1 = (z1 * (seed + 1));
 	z2 = (z2 * (seed + 1));
@@ -116,7 +118,7 @@ void lfsr113_seed(uint64_t seed, uint64_t **state)
 
 static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 {
-	uint64_t seed, *state = NULL;
+	uint32_t seed, *state = NULL;
 
 	if (!PyArg_ParseTuple(args, "k", &seed))
 		return NULL;
@@ -131,7 +133,7 @@ static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 
 static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 {
-	uint64_t i, value, numints, *localstate;
+	uint32_t i, value, numints, *localstate;
 
 	PyObject *listObj;
 	PyObject *intObj;
@@ -140,15 +142,15 @@ static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 		return NULL;
 
 	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(uint64_t)*5);
+	localstate = malloc(sizeof(uint32_t)*5);
 	numints = PyList_Size(listObj);
 	for (i=0; i<numints; i++) {
 		intObj = PyList_GetItem(listObj, i);
-		value = (uint64_t) PyLong_AsLong(intObj);
+		value = (uint32_t) PyLong_AsLong(intObj);
 		localstate[i] = value;
 	}
 
-	uint64_t rand = lfsr113(&localstate);
+	uint32_t rand = lfsr113(&localstate);
 	localstate[4] = rand;
 
 	PyObject *pystate = Py_BuildValue("[k, k, k, k, k]",
@@ -212,17 +214,20 @@ initsyncrng(void)
 #endif
 
 #ifndef TARGETPYTHON
+
 /*
  *
  * Start of R code
  *
  */
+
+// Set the seed for the generator from the reference class
 SEXP R_syncrng_seed(SEXP seed)
 {
 	int i;
 	double *pseed = REAL(seed),
 	       *pstate = NULL;
-	uint64_t useed = (uint64_t) *pseed;
+	uint32_t useed = (uint32_t) *pseed;
 	uint64_t *state = NULL;
 
 	lfsr113_seed(useed, &state);
@@ -239,6 +244,7 @@ SEXP R_syncrng_seed(SEXP seed)
 	return Rstate;
 }
 
+// get a random number from the reference class
 SEXP R_syncrng_rand(SEXP state)
 {
 	uint64_t *localstate = malloc(sizeof(uint64_t)*4);
@@ -248,7 +254,7 @@ SEXP R_syncrng_rand(SEXP state)
 		localstate[i] = (uint64_t) pstate[i];
 	}
 
-	uint64_t rand = lfsr113(&localstate);
+	uint32_t rand = lfsr113(&localstate);
 
 	SEXP Rstate = PROTECT(allocVector(REALSXP, 5));
 	pstate = REAL(Rstate);
@@ -263,6 +269,83 @@ SEXP R_syncrng_rand(SEXP state)
 
 	return Rstate;
 }
+
+/*
+ * The following code is used to make SyncRNG a real "user-defined" RNG 
+ * follwing .Random.user documentation.
+ *
+ */
+
+static uint32_t global_R_seed;
+static uint32_t global_R_nseed = 1;
+static double global_R_result_uniform;
+static double global_R_result_normal;
+static uint64_t *global_R_state = NULL;
+
+double *user_unif_rand()
+{
+	if (global_R_state == NULL) {
+		// if it's not seeded yet we seed it with 0
+		global_R_seed = 0;
+		lfsr113_seed(global_R_seed, &global_R_state);
+	}
+
+	uint32_t rand = lfsr113(&global_R_state);
+	global_R_result_uniform = rand * 2.3283064365387e-10;
+	return &global_R_result_uniform;
+}
+
+// see: https://stackoverflow.com/q/47824450/1154005
+Int32 _unscramble(Int32 scram)
+{
+	int j;
+	for (j=0; j<50; j++) {
+		scram = ((scram - 1) * 2783094533);
+	}
+	return scram;
+}
+
+// note that Int32 is "unsigned int" which is not necessarily 32 bit
+void user_unif_init(Int32 seed_in)
+{
+	global_R_seed = seed_in;
+	uint32_t useed = _unscramble(seed_in);
+
+	// destroy the previous state, we're reseeding the RNG
+	if (global_R_state != NULL) {
+		free(global_R_state);
+		global_R_state = NULL;
+	}
+	lfsr113_seed(useed, &global_R_state);
+}
+
+int *user_unif_nseed()
+{
+	return &global_R_nseed;
+}
+
+int *user_unif_seedloc()
+{
+	return (int *) &global_R_seed;
+}
+
+double *user_norm_rand()
+{
+	double u, v, z, x;
+	do {
+		u = *user_unif_rand();
+		v = 0.857764 * (2. * (*user_unif_rand()) - 1);
+		x = v/u;
+		z = 0.25 * x * x;
+		if (z < 1. - u)
+			break;
+		if (z > 0.259/u + 0.35)
+			continue;
+	} while (z > -log(u));
+	global_R_result_normal = x;
+	return &global_R_result_normal;
+}
+
 /*
  *
  * End of R code
