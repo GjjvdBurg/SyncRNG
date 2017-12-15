@@ -46,3 +46,18 @@ test_that("test_first_1000", {
   }
   close(conn)
 })
+
+printf <- function(...) invisible(cat(sprintf(...)));
+
+test_that("test_first_1000_unif", {
+  set.seed(0, 'user', 'user')
+  fileName <- "./first_1000_seed_0.txt"
+  conn <- file(fileName, open="r")
+  linn <- readLines(conn)
+  for (i in 1:length(linn)) {
+	  exp <- as.numeric(linn[i])
+      u <- as.numeric(runif(1)*(2**32 - 1))
+	  expect_equal(exp, u)
+  }
+  close(conn)
+})
