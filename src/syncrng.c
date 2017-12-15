@@ -11,6 +11,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <R_ext/Random.h>
+#include <R_ext/Rdynload.h>
 #endif
 
 /**
@@ -220,6 +221,24 @@ initsyncrng(void)
  * Start of R code
  *
  */
+
+SEXP R_syncrng_seed(SEXP seed);
+SEXP R_syncrng_rand(SEXP state);
+
+R_CallMethodDef callMethods[] = {
+	{"R_syncrng_seed", (DL_FUNC) &R_syncrng_seed, 1},
+	{"R_syncrng_rand", (DL_FUNC) &R_syncrng_seed, 1},
+	{NULL, NULL, 0}
+};
+R_CMethodDef cMethods[] = {
+	{NULL, NULL, 0}
+};
+
+void R_init_myLib(DllInfo *info)
+{
+	R_registerRoutines(info, cMethods, callMethods, NULL, NULL);
+	R_useDynamicSymbols(info, TRUE);
+}
 
 // Set the seed for the generator from the reference class
 SEXP R_syncrng_seed(SEXP seed)
