@@ -2,5 +2,6 @@
 
 export(SyncRNG)
 exportClasses(SyncRNG)
+import(methods)
 importFrom(methods,new)
-useDynLib(SyncRNG)
+useDynLib(SyncRNG, .registration = TRUE)

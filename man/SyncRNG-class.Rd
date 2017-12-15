@@ -6,7 +6,7 @@
 \alias{SyncRNG-class}
 \title{A Reference Class for SyncRNG}
 \description{
-A Reference Class for SyncRNG
+See \link{syncrng-package} for package documentation.
 }
 \section{Fields}{
 

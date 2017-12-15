@@ -1,4 +1,3 @@
-=======
 SyncRNG
 =======
 A synchronized Tausworthe RNG usable in R and Python.
@@ -6,14 +5,17 @@ A synchronized Tausworthe RNG usable in R and Python.
 Why?
 ====
 
-This program was created because it was desired to have the same random 
-numbers in both R and Python programs. Although both languages implement a 
-Mersenne-Twister RNG, the implementations are so different that it is not 
-possible to get the same random numbers with the same seed.
+This program was created because I needed to have the same random numbers in 
+both R and Python. Although both languages implement a Mersenne-Twister RNG, 
+the implementations are so different that it is not possible to get the same 
+random numbers with the same seed.
 
 SyncRNG is a Tausworthe RNG implemented in ``syncrng.c``, and linked to both R 
 and Python. Since both use the same underlying C code, the random numbers will 
 be the same in both languages, provided the same seed is used.
+
+You can read more about my motivations for creating this 
+[here](https://gertjanvandenburg.com/blog/syncrng/).
 
 How
 ===
@@ -37,6 +39,21 @@ Similarly, after installing the R library you can do in R::
     }
 
 You'll notice that the random numbers are indeed the same.
+
+R - User defined RNG
+--------------------
+
+R allows the user to define a custom random number generator, which is then 
+used for the common ``runif`` and ``rnorm`` functions in R. This has also been 
+implemented in SyncRNG as of version 1.3.0. To enable this, run::
+
+    library(SyncRNG)
+
+    set.seed(123456, 'user', 'user')
+    runif(10)
+
+These numbers are between [0, 1) and multiplying by ``2**32 - 1`` gives the 
+same results as above.
 
 Installation
 ============
