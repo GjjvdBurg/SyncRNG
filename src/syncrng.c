@@ -119,7 +119,8 @@ void lfsr113_seed(uint32_t seed, uint64_t **state)
 
 static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 {
-	uint32_t seed, *state = NULL;
+	uint32_t seed;
+	uint64_t *state = NULL;
 
 	if (!PyArg_ParseTuple(args, "k", &seed))
 		return NULL;
@@ -134,7 +135,8 @@ static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 
 static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 {
-	uint32_t i, value, numints, *localstate;
+	uint32_t i, value, numints;
+       	uint64_t *localstate;
 
 	PyObject *listObj;
 	PyObject *intObj;
