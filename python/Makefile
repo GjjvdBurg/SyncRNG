@@ -10,7 +10,7 @@ SHELL := bash
 MAKEFLAGS += --no-builtin-rules
 
 PACKAGE=SyncRNG
-VENV_DIR=/tmp/sync_venv/
+VENV_DIR=./venv/
 
 .PHONY: help
 
