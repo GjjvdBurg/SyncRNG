@@ -1,18 +1,5 @@
-#ifdef TARGETPYTHON
 #include "Python.h"
 #include <stdint.h>
-#endif
-
-#ifndef TARGETPYTHON
-#define STRICT_R_HEADERS
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <R.h>
-#include <Rinternals.h>
-#include <R_ext/Random.h>
-#include <R_ext/Rdynload.h>
-#endif
 
 /**
  * @brief Generate a single random number using the capped Tausworthe RNG
@@ -110,7 +97,6 @@ void lfsr113_seed(uint32_t seed, uint64_t **state)
 	(*state)[3] = z4;
 }
 
-#ifdef TARGETPYTHON
 /*
  *
  * Start of Python code
@@ -121,11 +107,8 @@ static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
 {
 	uint32_t seed;
 	uint64_t *state = NULL;
-<<<<<<< HEAD:new_R/src/syncrng.c
-=======
 
 	PyObject *dblObj;
->>>>>>> python:new_python/src/_syncrng.c
 
 	if (!PyArg_ParseTuple(args, "O", &dblObj))
 		return NULL;
@@ -145,14 +128,9 @@ static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
 
 static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
 {
-<<<<<<< HEAD:new_R/src/syncrng.c
-	uint32_t i, value, numints;
-       	uint64_t *localstate;
-=======
 	int i;
 	uint32_t rand;
 	uint64_t *localstate = malloc(sizeof(uint64_t) * 4);
->>>>>>> python:new_python/src/_syncrng.c
 
 	PyObject *listObj;
 	PyObject *dblObj;
@@ -160,26 +138,12 @@ static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &listObj))
 		return NULL;
 
-<<<<<<< HEAD:new_R/src/syncrng.c
-	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(uint32_t)*5);
-	numints = PyList_Size(listObj);
-	for (i=0; i<numints; i++) {
-		intObj = PyList_GetItem(listObj, i);
-		value = (uint32_t) PyLong_AsLong(intObj);
-		localstate[i] = value;
-	}
-
-	uint32_t rand = lfsr113(&localstate);
-	localstate[4] = rand;
-=======
 	for (i=0; i<4; i++) {
 		dblObj = PyList_GetItem(listObj, i);
 		localstate[i] = (uint64_t) PyFloat_AS_DOUBLE(dblObj);
 	}
 
 	rand = lfsr113(&localstate);
->>>>>>> python:new_python/src/_syncrng.c
 
 	PyObject *pystate = Py_BuildValue("[d, d, d, d, d]",
 			(double) localstate[0],
@@ -245,163 +209,3 @@ init_syncrng(void)
 #endif
 
 #ifndef TARGETPYTHON
-
-/*
- *
- * Start of R code
- *
- */
-
-SEXP R_syncrng_seed(SEXP seed);
-SEXP R_syncrng_rand(SEXP state);
-
-R_CallMethodDef callMethods[] = {
-	{"R_syncrng_seed", (DL_FUNC) &R_syncrng_seed, 1},
-	{"R_syncrng_rand", (DL_FUNC) &R_syncrng_seed, 1},
-	{NULL, NULL, 0}
-};
-R_CMethodDef cMethods[] = {
-	{NULL, NULL, 0}
-};
-
-void R_init_myLib(DllInfo *info)
-{
-	R_registerRoutines(info, cMethods, callMethods, NULL, NULL);
-	R_useDynamicSymbols(info, TRUE);
-}
-
-// Set the seed for the generator from the reference class
-SEXP R_syncrng_seed(SEXP seed)
-{
-	int i;
-	double *pseed = REAL(seed),
-	       *pstate = NULL;
-	uint32_t useed = (uint32_t) *pseed;
-	uint64_t *state = NULL;
-
-	lfsr113_seed(useed, &state);
-
-	SEXP Rstate = PROTECT(allocVector(REALSXP, 5));
-	pstate = REAL(Rstate);
-	for (i=0; i<4; i++) {
-		pstate[i] = (double) state[i];
-	}
-	pstate[4] = -1.0;
-	free(state);
-
-	UNPROTECT(1);
-	return Rstate;
-}
-
-// get a random number from the reference class
-SEXP R_syncrng_rand(SEXP state)
-{
-	uint64_t *localstate = malloc(sizeof(uint64_t)*4);
-	double *pstate = REAL(state);
-	int i;
-	for (i=0; i<4; i++) {
-		localstate[i] = (uint64_t) pstate[i];
-	}
-
-	uint32_t rand = lfsr113(&localstate);
-
-	SEXP Rstate = PROTECT(allocVector(REALSXP, 5));
-	pstate = REAL(Rstate);
-
-	for (i=0; i<4; i++) {
-		pstate[i] = (double) localstate[i];
-	}
-	pstate[4] = (double) rand;
-	UNPROTECT(1);
-
-	free(localstate);
-
-	return Rstate;
-}
-
-/*
- * The following code is used to make SyncRNG a real "user-defined" RNG 
- * follwing .Random.user documentation.
- *
- */
-
-static uint32_t global_R_seed;
-<<<<<<< HEAD:new_R/src/syncrng.c
-static int global_R_nseed = 1;
-=======
-static uint32_t global_R_nseed = 1;
->>>>>>> python:new_python/src/_syncrng.c
-static double global_R_result_uniform;
-static double global_R_result_normal;
-static uint64_t *global_R_state = NULL;
-
-double *user_unif_rand()
-{
-	if (global_R_state == NULL) {
-		// if it's not seeded yet we seed it with 0
-		global_R_seed = 0;
-		lfsr113_seed(global_R_seed, &global_R_state);
-	}
-
-	uint32_t rand = lfsr113(&global_R_state);
-	global_R_result_uniform = rand * 2.3283064365387e-10;
-	return &global_R_result_uniform;
-}
-
-// see: https://stackoverflow.com/q/47824450/1154005
-Int32 _unscramble(Int32 scram)
-{
-	int j;
-	for (j=0; j<50; j++) {
-		scram = ((scram - 1) * 2783094533);
-	}
-	return scram;
-}
-
-// note that Int32 is "unsigned int" which is not necessarily 32 bit
-void user_unif_init(Int32 seed_in)
-{
-	global_R_seed = seed_in;
-	uint32_t useed = _unscramble(seed_in);
-
-	// destroy the previous state, we're reseeding the RNG
-	if (global_R_state != NULL) {
-		free(global_R_state);
-		global_R_state = NULL;
-	}
-	lfsr113_seed(useed, &global_R_state);
-}
-
-int *user_unif_nseed()
-{
-	return &global_R_nseed;
-}
-
-int *user_unif_seedloc()
-{
-	return (int *) &global_R_seed;
-}
-
-double *user_norm_rand()
-{
-	double u, v, z, x;
-	do {
-		u = *user_unif_rand();
-		v = 0.857764 * (2. * (*user_unif_rand()) - 1);
-		x = v/u;
-		z = 0.25 * x * x;
-		if (z < 1. - u)
-			break;
-		if (z > 0.259/u + 0.35)
-			continue;
-	} while (z > -log(u));
-	global_R_result_normal = x;
-	return &global_R_result_normal;
-}
-
-/*
- *
- * End of R code
- *
- */
-#endif
