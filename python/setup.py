@@ -96,7 +96,6 @@ setup(
             'Intended Audience :: Developers',
             'Intended Audience :: Science/Research',
             'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
-            'Programming Language :: Python :: 2.7',
             'Programming Language :: Python :: 3',
             'Topic :: Scientific/Engineering :: Mathematics'
     ],
