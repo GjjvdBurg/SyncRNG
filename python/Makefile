@@ -10,7 +10,7 @@ SHELL := bash
 MAKEFLAGS += --no-builtin-rules
 
 PACKAGE=SyncRNG
-VENV_DIR=./venv/
+VENV_DIR=./venv
 
 .PHONY: help
 
@@ -66,9 +66,9 @@ venv: $(VENV_DIR)/bin/activate
 
 $(VENV_DIR)/bin/activate:
 	test -d $(VENV_DIR) || python -m venv $(VENV_DIR)
+	ls -R $(VENV_DIR)
 	source $(VENV_DIR)/bin/activate && pip install -e .[dev]
 	touch $(VENV_DIR)/bin/activate
-
 
 ############
 # Clean up #
