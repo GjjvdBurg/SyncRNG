@@ -5,7 +5,12 @@
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 #
 
+SHELL := bash
+.SHELLFLAGS := -eu -o pipefail -c
+MAKEFLAGS += --no-builtin-rules
+
 PACKAGE=SyncRNG
+VENV_DIR=/tmp/sync_venv/
 
 .PHONY: help
 
@@ -16,39 +21,67 @@ help:
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m\
 		%s\n", $$1, $$2}'
 
-install: ## Install for the current user using the default python command
+################
+# Installation #
+################
+
+.PHONY: inplace install
+
+inplace:
 	python setup.py build_ext --inplace
-	python setup.py install --user
 
-install2: ## Install for the current user using the python2 command
-	python2 setup.py build_ext --inplace
-	python2 setup.py install --user
+install: ## Install for the current user using the default python command
+	python setup.py build_ext --inplace && \
+		python setup.py install --user
 
-test: develop ## Run nosetests using the default nosetests command
-	nosetests -v
+################
+# Distribution #
+################
 
-test2: develop2 ## Run nosetests using the nosetests2 command
-	nosetests2 -v
+.PHONY: release dist
 
-cover: ## Test unit test coverage using default nosetests
-	nosetests --with-coverage --cover-package=$(PACKAGE) \
-		--cover-erase --cover-inclusive --cover-branches
-
-clean: ## Clean build dist and egg directories left after install
-	rm -rf ./dist ./build ./$(PACKAGE).egg-info
-	rm -rf *.so
-	rm -f MANIFEST
-	rm -f .coverage
-
-develop: ## Install a development version of the package needed for testing
-	python setup.py develop --user
-
-develop2: ## Install a development version of the package needed for testing (python2)
-	python2 setup.py develop --user
+release: ## Make a release
+	python make_release.py
 
 dist: ## Make Python source distribution
 	python setup.py sdist
 
-dist2: ## Make Python 2 source distribution
-	python2 setup.py sdist
 
+###########
+# Testing #
+###########
+
+.PHONY: test
+
+test: venv ## Run nosetests using the default nosetests command
+	source $(VENV_DIR)/bin/activate && green -a -vv ./tests
+
+#######################
+# Virtual environment #
+#######################
+
+.PHONY: venv
+
+venv: $(VENV_DIR)/bin/activate
+
+$(VENV_DIR)/bin/activate:
+	test -d $(VENV_DIR) || python -m venv $(VENV_DIR)
+	source $(VENV_DIR)/bin/activate && pip install -e .[dev]
+	touch $(VENV_DIR)/bin/activate
+
+
+############
+# Clean up #
+############
+
+.PHONY: clean
+
+clean: ## Clean build dist and egg directories left after install
+	rm -rf ./dist ./build ./$(PACKAGE).egg-info
+	rm -rf ./build
+	rm -rf ./$(PACKAGE).egg-info
+	rm -rf *.so
+	rm -f MANIFEST
+	rm -f .coverage
+	find . -type f -iname '*.pyc' -delete
+	find . -type d -name '__pycache__' -empty -delete

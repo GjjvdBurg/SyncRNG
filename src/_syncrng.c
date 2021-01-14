@@ -117,56 +117,62 @@ void lfsr113_seed(uint32_t seed, uint64_t **state)
  *
  */
 
-static PyObject *syncrng_seed(PyObject *self, PyObject *args)
+static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
 {
 	uint32_t seed;
 	uint64_t *state = NULL;
 
-	if (!PyArg_ParseTuple(args, "k", &seed))
+	PyObject *dblObj;
+
+	if (!PyArg_ParseTuple(args, "O", &dblObj))
 		return NULL;
 
+	seed = (uint32_t) PyLong_AsLong(dblObj);
 	lfsr113_seed(seed, &state);
 
-	PyObject *pystate = Py_BuildValue("[k, k, k, k]",
-		       	state[0], state[1], state[2], state[3]);
+	PyObject *pystate = Py_BuildValue("[d, d, d, d, d]",
+			(double) state[0],
+			(double) state[1],
+			(double) state[2],
+			(double) state[3],
+			 -1.0);
 	free(state);
 	return pystate;
 }
 
-static PyObject *syncrng_rand(PyObject *self, PyObject *args)
+static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
 {
-	uint32_t i, value, numints;
-       	uint64_t *localstate;
+	int i;
+	uint32_t rand;
+	uint64_t *localstate = malloc(sizeof(uint64_t) * 4);
 
 	PyObject *listObj;
-	PyObject *intObj;
+	PyObject *dblObj;
 
 	if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &listObj))
 		return NULL;
 
-	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(uint32_t)*5);
-	numints = PyList_Size(listObj);
-	for (i=0; i<numints; i++) {
-		intObj = PyList_GetItem(listObj, i);
-		value = (uint32_t) PyLong_AsLong(intObj);
-		localstate[i] = value;
+	for (i=0; i<4; i++) {
+		dblObj = PyList_GetItem(listObj, i);
+		localstate[i] = (uint64_t) PyFloat_AS_DOUBLE(dblObj);
 	}
 
-	uint32_t rand = lfsr113(&localstate);
-	localstate[4] = rand;
+	rand = lfsr113(&localstate);
 
-	PyObject *pystate = Py_BuildValue("[k, k, k, k, k]",
-		       	localstate[0], localstate[1], localstate[2],
-			localstate[3], rand);
+	PyObject *pystate = Py_BuildValue("[d, d, d, d, d]",
+			(double) localstate[0],
+			(double) localstate[1],
+			(double) localstate[2],
+			(double) localstate[3],
+			(double) rand);
 	free(localstate);
 	return pystate;
 }
 
 static PyMethodDef SyncRNGMethods[] = {
-	{"seed", syncrng_seed, METH_VARARGS,
+	{"seed", _syncrng_seed, METH_VARARGS,
 		"Seed the RNG."},
-	{"rand", syncrng_rand, METH_VARARGS,
+	{"rand", _syncrng_rand, METH_VARARGS,
 		"Generate a single random integer using SyncRNG."},
 	{NULL, NULL, 0, NULL}
 };
@@ -174,7 +180,7 @@ static PyMethodDef SyncRNGMethods[] = {
 #if PY_MAJOR_VERSION >= 3
 	static struct PyModuleDef moduledef = {
 		PyModuleDef_HEAD_INIT,
-		"syncrng",
+		"_syncrng",
 		"Python interface to SyncRNG",
 		-1,
 		SyncRNGMethods,
@@ -194,7 +200,7 @@ moduleinit(void)
 	#if PY_MAJOR_VERSION >= 3
 	m = PyModule_Create(&moduledef);
 	#else
-	m = Py_InitModule3("syncrng", SyncRNGMethods,
+	m = Py_InitModule3("_syncrng", SyncRNGMethods,
 			"Python interface to SyncRNG");
 	#endif
 
@@ -203,13 +209,13 @@ moduleinit(void)
 
 #if PY_MAJOR_VERSION >= 3
 PyMODINIT_FUNC
-PyInit_syncrng(void)
+PyInit__syncrng(void)
 {
 	return moduleinit();
 }
 #else
 PyMODINIT_FUNC
-initsyncrng(void)
+init_syncrng(void)
 {
 	moduleinit();
 }
