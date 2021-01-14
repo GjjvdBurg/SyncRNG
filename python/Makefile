@@ -51,10 +51,13 @@ dist: ## Make Python source distribution
 # Testing #
 ###########
 
-.PHONY: test
+.PHONY: test test_direct
 
 test: venv ## Run nosetests using the default nosetests command
 	source $(VENV_DIR)/bin/activate && green -a -vv ./tests
+
+test_direct:
+	pip install -e .[dev] && green -a -vv ./tests
 
 #######################
 # Virtual environment #
@@ -66,7 +69,6 @@ venv: $(VENV_DIR)/bin/activate
 
 $(VENV_DIR)/bin/activate:
 	test -d $(VENV_DIR) || python -m venv $(VENV_DIR)
-	ls -R $(VENV_DIR)
 	source $(VENV_DIR)/bin/activate && pip install -e .[dev]
 	touch $(VENV_DIR)/bin/activate
 

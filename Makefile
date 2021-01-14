@@ -31,6 +31,9 @@ test_R:
 test_python:
 	$(MAKE) -C $(PYTHON_DIR) test
 
+test_python_direct:
+	$(MAKE) -C $(PYTHON_DIR) test_direct
+
 ############
 # Clean up #
 ############
