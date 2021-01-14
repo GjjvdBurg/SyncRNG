@@ -4,8 +4,6 @@ used to seed and pull numbers from the RNG.
 
 """
 
-from __future__ import division
-
 from copy import deepcopy
 from warnings import warn as _warn
 
