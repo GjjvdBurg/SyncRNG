@@ -117,7 +117,7 @@ void lfsr113_seed(uint32_t seed, uint64_t **state)
  *
  */
 
-static PyObject *syncrng_seed(PyObject *self, PyObject *args)
+static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
 {
 	uint32_t seed;
 	uint64_t *state = NULL;
@@ -133,7 +133,7 @@ static PyObject *syncrng_seed(PyObject *self, PyObject *args)
 	return pystate;
 }
 
-static PyObject *syncrng_rand(PyObject *self, PyObject *args)
+static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
 {
 	uint32_t i, value, numints;
        	uint64_t *localstate;
@@ -164,9 +164,9 @@ static PyObject *syncrng_rand(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef SyncRNGMethods[] = {
-	{"seed", syncrng_seed, METH_VARARGS,
+	{"seed", _syncrng_seed, METH_VARARGS,
 		"Seed the RNG."},
-	{"rand", syncrng_rand, METH_VARARGS,
+	{"rand", _syncrng_rand, METH_VARARGS,
 		"Generate a single random integer using SyncRNG."},
 	{NULL, NULL, 0, NULL}
 };
@@ -174,7 +174,7 @@ static PyMethodDef SyncRNGMethods[] = {
 #if PY_MAJOR_VERSION >= 3
 	static struct PyModuleDef moduledef = {
 		PyModuleDef_HEAD_INIT,
-		"syncrng",
+		"_syncrng",
 		"Python interface to SyncRNG",
 		-1,
 		SyncRNGMethods,
@@ -194,7 +194,7 @@ moduleinit(void)
 	#if PY_MAJOR_VERSION >= 3
 	m = PyModule_Create(&moduledef);
 	#else
-	m = Py_InitModule3("syncrng", SyncRNGMethods,
+	m = Py_InitModule3("_syncrng", SyncRNGMethods,
 			"Python interface to SyncRNG");
 	#endif
 
@@ -203,13 +203,13 @@ moduleinit(void)
 
 #if PY_MAJOR_VERSION >= 3
 PyMODINIT_FUNC
-PyInit_syncrng(void)
+PyInit__syncrng(void)
 {
 	return moduleinit();
 }
 #else
 PyMODINIT_FUNC
-initsyncrng(void)
+init_syncrng(void)
 {
 	moduleinit();
 }

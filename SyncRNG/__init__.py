@@ -9,7 +9,8 @@ from __future__ import division
 from copy import deepcopy
 from warnings import warn as _warn
 
-import syncrng
+from _syncrng import seed as _seed
+from _syncrng import rand as _rand
 
 class SyncRNG(object):
 
