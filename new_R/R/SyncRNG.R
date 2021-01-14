@@ -1,13 +1,20 @@
 library(methods)
 
 #' A Reference Class for SyncRNG
+#' 
+#' See \link{syncrng-package} for package documentation.
 #'
 #' @field seed The seed for the random number generator
 #' @field state The current state of the RNG, should not be modified by the 
 #' user
 #'
+#' @useDynLib SyncRNG, .registration = TRUE
+#' @export SyncRNG
+#' @exportClass SyncRNG
+#' @importFrom methods new
+#'
 #' @examples
-#' s = SyncRNG(seed=123456)
+#' s <- SyncRNG(seed=123456)
 #' for (i in 1:10)
 #'   cat(s$randi(), '\n')
 #'

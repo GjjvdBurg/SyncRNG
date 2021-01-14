@@ -298,7 +298,7 @@ SEXP R_syncrng_rand(SEXP state)
  */
 
 static uint32_t global_R_seed;
-static uint32_t global_R_nseed = 1;
+static int global_R_nseed = 1;
 static double global_R_result_uniform;
 static double global_R_result_normal;
 static uint64_t *global_R_state = NULL;
