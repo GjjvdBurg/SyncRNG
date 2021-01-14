@@ -6,7 +6,7 @@ Author: Gertjan van den Burg <gertjanvandenburg@gmail.com>
 Maintainer: Gertjan van den Burg <gertjanvandenburg@gmail.com>
 Depends:
     R (>= 3.0.0)
-Description: Random number generation designed for cross-language usage.
+Description: Generate the same random numbers in R and Python.
 License: GPL-2
 Imports:
     methods
