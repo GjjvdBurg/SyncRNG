@@ -74,7 +74,7 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # upload to PyPI on every tag starting with 'v'
+    # upload to PyPI on tags starting with 'v' that don't contain '-rc.'
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v') && !contains(github.event.ref, '-rc.')
     steps:
       - uses: actions/download-artifact@v2
