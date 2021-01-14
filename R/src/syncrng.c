@@ -114,7 +114,7 @@ SEXP R_syncrng_rand(SEXP state);
 
 R_CallMethodDef callMethods[] = {
 	{"R_syncrng_seed", (DL_FUNC) &R_syncrng_seed, 1},
-	{"R_syncrng_rand", (DL_FUNC) &R_syncrng_seed, 1},
+	{"R_syncrng_rand", (DL_FUNC) &R_syncrng_rand, 1},
 	{NULL, NULL, 0}
 };
 R_CMethodDef cMethods[] = {
