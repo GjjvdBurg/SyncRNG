@@ -25,7 +25,6 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          options(pkgType = 'binary')
           install.packages('remotes')
           remotes::install_deps(pkgdir='./R/', dependencies=T)
           remotes::install_cran('testthat')
