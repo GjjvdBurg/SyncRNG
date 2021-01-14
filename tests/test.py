@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
+import os
 import unittest
 
 from SyncRNG import SyncRNG
@@ -39,7 +39,11 @@ class SyncRNGTestCase(unittest.TestCase):
 
     def test_first_1000(self):
         s = SyncRNG(seed=0)
-        with open("./test/first_1000_seed_0.txt", "r") as fid:
+
+        here = os.path.dirname(__file__)
+        test_file = os.path.join(here, "first_1000_seed_0.txt")
+
+        with open(test_file, "r") as fid:
             for line in fid:
                 exp = int(line.strip())
                 self.assertTrue(exp == s.randi())
