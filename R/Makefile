@@ -35,10 +35,10 @@ build: clean
 test: check
 
 check: build
-	R CMD check $(PACKAGE)_$(VERSION).tar.gz
+	R CMD check --no-manual $(PACKAGE)_$(VERSION).tar.gz
 
 cran: build
-	R CMD check --as-cran $(PACKAGE)_$(VERSION).tar.gz
+	R CMD check --no-manual --as-cran $(PACKAGE)_$(VERSION).tar.gz
 
 ############
 # Clean up #
