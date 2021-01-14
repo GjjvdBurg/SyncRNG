@@ -163,49 +163,28 @@ static PyMethodDef SyncRNGMethods[] = {
 	{NULL, NULL, 0, NULL}
 };
 
-#if PY_MAJOR_VERSION >= 3
-	static struct PyModuleDef moduledef = {
-		PyModuleDef_HEAD_INIT,
-		"_syncrng",
-		"Python interface to SyncRNG",
-		-1,
-		SyncRNGMethods,
-		NULL,
-		NULL,
-		NULL,
-		NULL
-	};
-#endif
-
+static struct PyModuleDef moduledef = {
+	PyModuleDef_HEAD_INIT,
+	"_syncrng",
+	"Python interface to SyncRNG",
+	-1,
+	SyncRNGMethods,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
 
 static PyObject *
 moduleinit(void)
 {
 	PyObject *m;
-
-	#if PY_MAJOR_VERSION >= 3
 	m = PyModule_Create(&moduledef);
-	#else
-	m = Py_InitModule3("_syncrng", SyncRNGMethods,
-			"Python interface to SyncRNG");
-	#endif
-
 	return m;
 }
 
-#if PY_MAJOR_VERSION >= 3
 PyMODINIT_FUNC
 PyInit__syncrng(void)
 {
 	return moduleinit();
 }
-#else
-PyMODINIT_FUNC
-init_syncrng(void)
-{
-	moduleinit();
-}
-#endif
-#endif
-
-#ifndef TARGETPYTHON
