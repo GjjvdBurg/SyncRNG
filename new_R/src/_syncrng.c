@@ -121,11 +121,8 @@ static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
 {
 	uint32_t seed;
 	uint64_t *state = NULL;
-<<<<<<< HEAD:new_R/src/syncrng.c
-=======
 
 	PyObject *dblObj;
->>>>>>> python:new_python/src/_syncrng.c
 
 	if (!PyArg_ParseTuple(args, "O", &dblObj))
 		return NULL;
@@ -145,14 +142,9 @@ static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
 
 static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
 {
-<<<<<<< HEAD:new_R/src/syncrng.c
-	uint32_t i, value, numints;
-       	uint64_t *localstate;
-=======
 	int i;
 	uint32_t rand;
 	uint64_t *localstate = malloc(sizeof(uint64_t) * 4);
->>>>>>> python:new_python/src/_syncrng.c
 
 	PyObject *listObj;
 	PyObject *dblObj;
@@ -160,26 +152,12 @@ static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &listObj))
 		return NULL;
 
-<<<<<<< HEAD:new_R/src/syncrng.c
-	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(uint32_t)*5);
-	numints = PyList_Size(listObj);
-	for (i=0; i<numints; i++) {
-		intObj = PyList_GetItem(listObj, i);
-		value = (uint32_t) PyLong_AsLong(intObj);
-		localstate[i] = value;
-	}
-
-	uint32_t rand = lfsr113(&localstate);
-	localstate[4] = rand;
-=======
 	for (i=0; i<4; i++) {
 		dblObj = PyList_GetItem(listObj, i);
 		localstate[i] = (uint64_t) PyFloat_AS_DOUBLE(dblObj);
 	}
 
 	rand = lfsr113(&localstate);
->>>>>>> python:new_python/src/_syncrng.c
 
 	PyObject *pystate = Py_BuildValue("[d, d, d, d, d]",
 			(double) localstate[0],
@@ -326,11 +304,7 @@ SEXP R_syncrng_rand(SEXP state)
  */
 
 static uint32_t global_R_seed;
-<<<<<<< HEAD:new_R/src/syncrng.c
-static int global_R_nseed = 1;
-=======
 static uint32_t global_R_nseed = 1;
->>>>>>> python:new_python/src/_syncrng.c
 static double global_R_result_uniform;
 static double global_R_result_normal;
 static uint64_t *global_R_state = NULL;
