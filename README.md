@@ -167,7 +167,9 @@ for trainidx, testidx in kf:
 
 ## Notes
 
-The random numbers are uniformly distributed on ``[0, 2^32 - 1]``.
+The random numbers are uniformly distributed on ``[0, 2^32 - 1]``. No 
+attention has been paid to thread-safety and you shouldn't use this random 
+number generator for cryptographic applications.
 
 ## Questions and Issues
 
