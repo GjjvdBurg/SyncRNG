@@ -1,17 +1,24 @@
 # SyncRNG
 
-A synchronized Tausworthe RNG usable in R and Python.
+[![build](https://github.com/GjjvdBurg/SyncRNG/workflows/build/badge.svg)](https://github.com/GjjvdBurg/SyncRNG/actions)
+[![CRAN version](https://www.r-pkg.org/badges/version/SyncRNG)](https://cran.r-project.org/web/packages/SyncRNG/index.html)
+[![CRAN package downloads](https://cranlogs.r-pkg.org/badges/grand-total/SyncRNG)](https://cran.r-project.org/web/packages/SyncRNG/index.html)
+[![PyPI version](https://badge.fury.io/py/SyncRNG.svg)](https://pypi.org/project/SyncRNG)
+[![Python package downloads](https://pepy.tech/badge/SyncRNG)](https://pepy.tech/project/SyncRNG)
+
+Generate the same random numbers in R and Python.
 
 ## Why?
 
 This program was created because it was desired to have the same random 
 numbers in both R and Python programs. Although both languages implement a 
-Mersenne-Twister RNG, the implementations are so different that it is not 
-possible to get the same random numbers with the same seed.
+Mersenne-Twister random number generator (RNG), the implementations are so 
+different that it is not possible to get the same random numbers, even with 
+the same seed.
 
-SyncRNG is a Tausworthe RNG implemented in ``syncrng.c``, and linked to both R 
-and Python. Since both use the same underlying C code, the random numbers will 
-be the same in both languages, provided the same seed is used.
+SyncRNG is a "Tausworthe" RNG implemented in C and linked to both R and 
+Python. Since both use the same underlying C code, the random numbers will be 
+the same in both languages when the same seed is used.
 
 You can read more about my motivations for creating this 
 [here](https://gertjanvandenburg.com/blog/syncrng/).
@@ -80,6 +87,10 @@ class:
    1.0)
 3. ``randbelow(n)``: generate a random integer below a given integer ``n``.
 4. ``shuffle(x)``: generate a permutation of a given list of numbers ``x``.
+
+Functionality is deliberately kept minimal to make maintaining this library 
+easier. It is straightforward to build more advanced applications on the 
+existing methods, as the following example shows.
 
 ### Creating the same train/test splits
 
@@ -162,7 +173,6 @@ for trainidx, testidx in kf:
     X_test = X[testidx, :]
 
     # continue using X_train and X_test here
-
 ```
 
 ## Notes
@@ -176,4 +186,6 @@ number generator for cryptographic applications.
 If you have questions, comments, or suggestions about SyncRNG or you encounter 
 a problem, please open an issue [on 
 GitHub](https://github.com/GjjvdBurg/SyncRNG/). Please don't hesitate to 
-contact me, you're helping to make this project better for everyone!
+contact me, you're helping to make this project better for everyone! If you 
+prefer not to use Github you can email me at ``gertjanvandenburg at gmail dot 
+com``.
