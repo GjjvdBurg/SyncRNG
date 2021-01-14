@@ -1,12 +1,12 @@
+# -*- coding: utf-8 -*-
 
-from __future__ import division
 
 import unittest
 
 from SyncRNG import SyncRNG
 
-class SyncRNGTestCase(unittest.TestCase):
 
+class SyncRNGTestCase(unittest.TestCase):
     def test_randi(self):
         s = SyncRNG(seed=123456)
         self.assertEqual(s.randi(), 959852049)
@@ -17,11 +17,11 @@ class SyncRNGTestCase(unittest.TestCase):
 
     def test_rand(self):
         s = SyncRNG(seed=123456)
-        self.assertAlmostEqual(s.rand(), 959852049/pow(2, 32))
-        self.assertAlmostEqual(s.rand(), 2314333085/pow(2, 32))
-        self.assertAlmostEqual(s.rand(), 2255782734/pow(2, 32))
-        self.assertAlmostEqual(s.rand(), 2921461239/pow(2, 32))
-        self.assertAlmostEqual(s.rand(), 1024197102/pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 959852049 / pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 2314333085 / pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 2255782734 / pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 2921461239 / pow(2, 32))
+        self.assertAlmostEqual(s.rand(), 1024197102 / pow(2, 32))
 
     def test_randbelow(self):
         s = SyncRNG(seed=123456)
@@ -44,5 +44,6 @@ class SyncRNGTestCase(unittest.TestCase):
                 exp = int(line.strip())
                 self.assertTrue(exp == s.randi())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
