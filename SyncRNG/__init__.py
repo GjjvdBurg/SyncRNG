@@ -20,7 +20,7 @@ class SyncRNG(object):
     def randi(self):
         tmp = _rand(self.state)
         self.state = tmp[:-1]
-        return(tmp[-1])
+        return int(tmp[-1])
 
     def rand(self):
         return self.randi() * 2.3283064365387e-10
