@@ -27,6 +27,7 @@
  */
 uint32_t lfsr113(uint64_t **state)
 {
+	// NOTE: This function *must* be the same as in the R package
 	uint64_t z1, z2, z3, z4;
 	uint64_t b;
 
@@ -72,6 +73,7 @@ uint32_t lfsr113(uint64_t **state)
  */
 void lfsr113_seed(uint32_t seed, uint64_t **state)
 {
+	// NOTE: This function *must* be the same as in the R package
 	uint64_t z1 = 2,
 		 z2 = 8,
 		 z3 = 16,

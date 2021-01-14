@@ -33,6 +33,7 @@
  */
 uint32_t lfsr113(uint64_t **state)
 {
+	// NOTE: This function *must* be the same as in the Python library
 	uint64_t z1, z2, z3, z4;
 	uint64_t b;
 
@@ -78,6 +79,7 @@ uint32_t lfsr113(uint64_t **state)
  */
 void lfsr113_seed(uint32_t seed, uint64_t **state)
 {
+	// NOTE: This function *must* be the same as in the Python library
 	uint64_t z1 = 2,
 		 z2 = 8,
 		 z3 = 16,
@@ -178,10 +180,9 @@ SEXP R_syncrng_rand(SEXP state)
 
 /*
  * The following code is used to make SyncRNG a real "user-defined" RNG 
- * follwing .Random.user documentation.
+ * following .Random.user documentation.
  *
  */
-
 static uint32_t global_R_seed;
 static int global_R_nseed = 1;
 static double global_R_result_uniform;
