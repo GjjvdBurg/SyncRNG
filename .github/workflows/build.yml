@@ -26,7 +26,7 @@ jobs:
       - name: Install R dependencies
         run: |
           install.packages('remotes')
-          remotes::install_deps(depedencies=T)
+          remotes::install_deps(pkgdir='./R/', dependencies=T)
           remotes::install_cran('testthat')
         shell: Rscript {0}
 
