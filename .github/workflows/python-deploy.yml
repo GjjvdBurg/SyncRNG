@@ -30,6 +30,9 @@ jobs:
       - name: Build wheels
         run: |
           python -m cibuildwheel --output-dir ./wheelhouse ./python
+        env:
+          CIBW_TEST_COMMAND: "python -m unittest discover {package}/tests"
+          CIBW_SKIP: "pp* cp27-* cp35-*"
 
       - uses: actions/upload-artifact@v2
         with:
