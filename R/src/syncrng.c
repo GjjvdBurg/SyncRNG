@@ -1,9 +1,3 @@
-#ifdef TARGETPYTHON
-#include "Python.h"
-#include <stdint.h>
-#endif
-
-#ifndef TARGETPYTHON
 #define STRICT_R_HEADERS
 #include <stdint.h>
 #include <stdio.h>
@@ -12,7 +6,6 @@
 #include <Rinternals.h>
 #include <R_ext/Random.h>
 #include <R_ext/Rdynload.h>
-#endif
 
 /**
  * @brief Generate a single random number using the capped Tausworthe RNG
@@ -110,142 +103,6 @@ void lfsr113_seed(uint32_t seed, uint64_t **state)
 	(*state)[3] = z4;
 }
 
-#ifdef TARGETPYTHON
-/*
- *
- * Start of Python code
- *
- */
-
-static PyObject *_syncrng_seed(PyObject *self, PyObject *args)
-{
-	uint32_t seed;
-	uint64_t *state = NULL;
-<<<<<<< HEAD:new_R/src/syncrng.c
-=======
-
-	PyObject *dblObj;
->>>>>>> python:new_python/src/_syncrng.c
-
-	if (!PyArg_ParseTuple(args, "O", &dblObj))
-		return NULL;
-
-	seed = (uint32_t) PyLong_AsLong(dblObj);
-	lfsr113_seed(seed, &state);
-
-	PyObject *pystate = Py_BuildValue("[d, d, d, d, d]",
-			(double) state[0],
-			(double) state[1],
-			(double) state[2],
-			(double) state[3],
-			 -1.0);
-	free(state);
-	return pystate;
-}
-
-static PyObject *_syncrng_rand(PyObject *self, PyObject *args)
-{
-<<<<<<< HEAD:new_R/src/syncrng.c
-	uint32_t i, value, numints;
-       	uint64_t *localstate;
-=======
-	int i;
-	uint32_t rand;
-	uint64_t *localstate = malloc(sizeof(uint64_t) * 4);
->>>>>>> python:new_python/src/_syncrng.c
-
-	PyObject *listObj;
-	PyObject *dblObj;
-
-	if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &listObj))
-		return NULL;
-
-<<<<<<< HEAD:new_R/src/syncrng.c
-	// we're just assuming you would never pass more than 4 values
-	localstate = malloc(sizeof(uint32_t)*5);
-	numints = PyList_Size(listObj);
-	for (i=0; i<numints; i++) {
-		intObj = PyList_GetItem(listObj, i);
-		value = (uint32_t) PyLong_AsLong(intObj);
-		localstate[i] = value;
-	}
-
-	uint32_t rand = lfsr113(&localstate);
-	localstate[4] = rand;
-=======
-	for (i=0; i<4; i++) {
-		dblObj = PyList_GetItem(listObj, i);
-		localstate[i] = (uint64_t) PyFloat_AS_DOUBLE(dblObj);
-	}
-
-	rand = lfsr113(&localstate);
->>>>>>> python:new_python/src/_syncrng.c
-
-	PyObject *pystate = Py_BuildValue("[d, d, d, d, d]",
-			(double) localstate[0],
-			(double) localstate[1],
-			(double) localstate[2],
-			(double) localstate[3],
-			(double) rand);
-	free(localstate);
-	return pystate;
-}
-
-static PyMethodDef SyncRNGMethods[] = {
-	{"seed", _syncrng_seed, METH_VARARGS,
-		"Seed the RNG."},
-	{"rand", _syncrng_rand, METH_VARARGS,
-		"Generate a single random integer using SyncRNG."},
-	{NULL, NULL, 0, NULL}
-};
-
-#if PY_MAJOR_VERSION >= 3
-	static struct PyModuleDef moduledef = {
-		PyModuleDef_HEAD_INIT,
-		"_syncrng",
-		"Python interface to SyncRNG",
-		-1,
-		SyncRNGMethods,
-		NULL,
-		NULL,
-		NULL,
-		NULL
-	};
-#endif
-
-
-static PyObject *
-moduleinit(void)
-{
-	PyObject *m;
-
-	#if PY_MAJOR_VERSION >= 3
-	m = PyModule_Create(&moduledef);
-	#else
-	m = Py_InitModule3("_syncrng", SyncRNGMethods,
-			"Python interface to SyncRNG");
-	#endif
-
-	return m;
-}
-
-#if PY_MAJOR_VERSION >= 3
-PyMODINIT_FUNC
-PyInit__syncrng(void)
-{
-	return moduleinit();
-}
-#else
-PyMODINIT_FUNC
-init_syncrng(void)
-{
-	moduleinit();
-}
-#endif
-#endif
-
-#ifndef TARGETPYTHON
-
 /*
  *
  * Start of R code
@@ -326,11 +183,7 @@ SEXP R_syncrng_rand(SEXP state)
  */
 
 static uint32_t global_R_seed;
-<<<<<<< HEAD:new_R/src/syncrng.c
 static int global_R_nseed = 1;
-=======
-static uint32_t global_R_nseed = 1;
->>>>>>> python:new_python/src/_syncrng.c
 static double global_R_result_uniform;
 static double global_R_result_normal;
 static uint64_t *global_R_state = NULL;
@@ -404,4 +257,3 @@ double *user_norm_rand()
  * End of R code
  *
  */
-#endif
