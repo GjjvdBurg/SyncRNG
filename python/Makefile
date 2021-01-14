@@ -6,7 +6,7 @@
 #
 
 SHELL := bash
-.SHELLFLAGS := -eu -o pipefail -c
+.SHELLFLAGS := -o pipefail -c
 MAKEFLAGS += --no-builtin-rules
 
 PACKAGE=SyncRNG
