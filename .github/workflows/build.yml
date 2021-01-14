@@ -43,5 +43,5 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: make test_py
+        run: make test_python
 
