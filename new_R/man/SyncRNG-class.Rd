@@ -2,8 +2,8 @@
 % Please edit documentation in R/SyncRNG.R
 \docType{class}
 \name{SyncRNG-class}
-\alias{SyncRNG}
 \alias{SyncRNG-class}
+\alias{SyncRNG}
 \title{A Reference Class for SyncRNG}
 \description{
 See \link{syncrng-package} for package documentation.
@@ -16,6 +16,7 @@ See \link{syncrng-package} for package documentation.
 \item{\code{state}}{The current state of the RNG, should not be modified by the 
 user}
 }}
+
 \section{Methods}{
 
 \describe{
@@ -29,10 +30,10 @@ user}
 
 \item{\code{shuffle(x)}}{Randomly shuffle a provided array of values}
 }}
+
 \examples{
 s <- SyncRNG(seed=123456)
 for (i in 1:10)
-  cat(s$randi(), '\\n')
+  cat(s$randi(), '\n')
 
 }
-

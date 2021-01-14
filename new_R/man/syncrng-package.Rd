@@ -21,6 +21,7 @@ numbers are generated using the object methods. It can also be used as a
 user-defined random number generator using the strategy outlined in 
 .Random.user. See the examples section below.
 }
+
 \examples{
 library(SyncRNG)
 
@@ -42,11 +43,10 @@ s$rand()
 # [1] 6.257184e-05
 
 }
+\references{
+URL: \url{https://github.com/GjjvdBurg/SyncRNG}
+}
 \author{
 Gerrit J.J. van den Burg\cr
 Maintainer: Gerrit J.J. van den Burg <gertjanvandenburg@gmail.com>
 }
-\references{
-URL: \url{https://github.com/GjjvdBurg/SyncRNG}
-}
-
