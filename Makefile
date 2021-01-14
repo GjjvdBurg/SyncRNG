@@ -29,7 +29,7 @@ test_R:
 	$(MAKE) -C $(R_DIR) test
 
 test_python:
-	$(MAKE) -c $(PYTHON_DIR) test
+	$(MAKE) -C $(PYTHON_DIR) test
 
 ############
 # Clean up #
