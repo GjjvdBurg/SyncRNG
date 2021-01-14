@@ -8,3 +8,4 @@ R/SyncRNG.Rcheck
 R/SyncRNG_*.tar.gz
 python/SyncRNG.egg-info
 python/venv
+python/dist
