@@ -77,6 +77,7 @@ $(VENV_DIR)/bin/activate:
 .PHONY: clean
 
 clean: ## Clean build dist and egg directories left after install
+	rm -rf $(VENV_DIR)
 	rm -rf ./dist ./build ./$(PACKAGE).egg-info
 	rm -rf ./build
 	rm -rf ./$(PACKAGE).egg-info
