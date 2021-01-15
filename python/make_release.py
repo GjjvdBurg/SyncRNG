@@ -122,7 +122,7 @@ class CopyFile(Step):
         self._target = target
 
     def action(self, context):
-        self.do_cmd(f"cp -v {self.source} {self.target}")
+        self.do_cmd(f"cp -v {self._source} {self._target}")
 
 
 class RunTests(Step):
