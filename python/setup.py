@@ -19,7 +19,9 @@ AUTHOR = "Gertjan van den Burg"
 DESCRIPTION = "Generate the same random numbers in R and Python"
 EMAIL = "gertjanvandenburg@gmail.com"
 LICENSE = "GPLv2"
-LICENSE_TROVE = "License :: OSI Approved :: GNU General Public License v2 (GPLv2)"
+LICENSE_TROVE = (
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)"
+)
 NAME = "SyncRNG"
 REQUIRES_PYTHON = ">=3.6.0"
 URL = "https://github.com/GjjvdBurg/SyncRNG"
@@ -82,12 +84,12 @@ setup(
     include_package_data=True,
     license=LICENSE,
     ext_modules=[
-            Extension(
-                "_syncrng",
-                define_macros=[('TARGETPYTHON', '1')],
-                sources=["src/_syncrng.c"],
-                extra_compile_args=['-g']
-                )
+        Extension(
+            "_syncrng",
+            define_macros=[("TARGETPYTHON", "1")],
+            sources=["src/_syncrng.c"],
+            extra_compile_args=["-g"],
+        )
     ],
     classifiers=[
         # Trove classifiers
