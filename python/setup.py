@@ -93,10 +93,9 @@ setup(
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         LICENSE_TROVE,
-            'Intended Audience :: Developers',
-            'Intended Audience :: Science/Research',
-            'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
-            'Programming Language :: Python :: 3',
-            'Topic :: Scientific/Engineering :: Mathematics'
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Mathematics",
     ],
 )
