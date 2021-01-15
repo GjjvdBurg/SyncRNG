@@ -19,7 +19,7 @@ import tempfile
 import webbrowser
 
 URLS = {
-    "CI": "https://github.com/GjjvdBurg/SyncRNG",
+    "CI": "https://github.com/GjjvdBurg/SyncRNG/actions",
 }
 
 
