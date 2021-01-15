@@ -10,8 +10,8 @@ Generate the same random numbers in R and Python.
 
 ## Why?
 
-This program was created because it was desired to have the same random 
-numbers in both R and Python programs. Although both languages implement a 
+This program was created because I wanted to have the same random numbers in 
+both R and Python programs. Although both languages implement a 
 Mersenne-Twister random number generator (RNG), the implementations are so 
 different that it is not possible to get the same random numbers, even with 
 the same seed.

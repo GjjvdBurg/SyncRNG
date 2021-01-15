@@ -1,5 +1,8 @@
 # Change log
 
+## Version 1.3.2
+
+* [Python] improvements to packaging and continuous integration
 
 ## Version 1.3.1
 
