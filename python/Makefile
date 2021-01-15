@@ -68,10 +68,20 @@ test_direct:
 
 venv: $(VENV_DIR)/bin/activate
 
-$(VENV_DIR)/bin/activate:
+$(VENV_DIR)/bin/activate: copy_files
 	test -d $(VENV_DIR) || python -m venv $(VENV_DIR)
 	source $(VENV_DIR)/bin/activate && pip install -e .[dev]
 	touch $(VENV_DIR)/bin/activate
+
+#############
+# Utilities #
+#############
+
+.PHONY: copy_files
+
+copy_files: ../README.md ../LICENSE
+	cp ../README.md ./README.md
+	cp ../LICENSE ./LICENSE
 
 ############
 # Clean up #
