@@ -15,16 +15,17 @@
 - [SyncRNG on CRAN](https://cran.r-project.org/web/packages/SyncRNG/index.html)
 - [Blog post on SyncRNG](https://gertjanvandenburg.com/blog/syncrng/)
 
-*Contents:* <a href="#introduction"><b>Introduction</b></a> | <a 
-href="#installation"><b>Installation</b></a> | <a 
-href="#usage"><b>Usage</b></a> | <a href="#r-user-defined-rng">R: User defined 
-RNG</a> | <a href="#functionality">Functionality</a> | <a 
-href="#examples"><b>Examples</b></a> | <a 
-href="sampling-without-replacement">Sampling without replacement</a> | <a 
-href="sampling-with-replacement">Sampling with replacement</a> | <a 
-href="generating-normally-distributed-values">Generating Normally Distributed 
-Values</a> | <a href="creating-the-same-traintest-splits">Creating the same 
-train/test splits</a> | <a href="#notes"><b>Notes</b></a>
+*Contents:* <a href="#introduction"><b>Introduction</b></a> |
+<a href="#installation"><b>Installation</b></a> |
+<a href="#usage"><b>Usage</b></a> |
+<a href="#functionality">Functionality</a> |
+<a href="#r-user-defined-rng">R: User defined RNG</a> |
+<a href="#examples"><b>Examples</b></a> |
+<a href="#sampling-without-replacement">Sampling without replacement</a> |
+<a href="#sampling-with-replacement">Sampling with replacement</a> |
+<a href="#generating-normally-distributed-values">Generating Normally Distributed Values</a> |
+<a href="#creating-the-same-traintest-splits">Creating the same train/test splits</a> |
+<a href="#notes"><b>Notes</b></a>
 
 ## Introduction
 
@@ -95,21 +96,6 @@ And in R you can use:
 
 You'll notice that the random numbers are indeed the same.
 
-### R: User defined RNG
-
-R allows the user to define a custom random number generator, which is then 
-used for the common ``runif`` function in R. This has also been implemented in 
-SyncRNG as of version 1.3.0. To enable this, run:
-
-```r
-> library(SyncRNG)
-> set.seed(123456, 'user', 'user')
-> runif(10)
-```
-
-These numbers are between [0, 1) and multiplying by ``2**32 - 1`` gives the 
-same results as above.
-
 ### Functionality
 
 In both R and Python the following methods are available for the ``SyncRNG`` 
@@ -124,6 +110,28 @@ class:
 Functionality is deliberately kept minimal to make maintaining this library 
 easier. It is straightforward to build more advanced applications on the 
 existing methods, as the following examples shows.
+
+### R: User defined RNG
+
+R allows the user to define a custom random number generator, which is then 
+used for the common ``runif`` function in R. This has also been implemented in 
+SyncRNG as of version 1.3.0. To enable this, run:
+
+```r
+> library(SyncRNG)
+> set.seed(123456, 'user', 'user')
+> runif(10)
+```
+
+These numbers are between [0, 1) and multiplying by ``2**32 - 1`` gives the 
+same results as above. Note that while this works for low-level random number 
+generation using ``runif``, it is not guaranteed that higher-level functions 
+that build on this (such as ``rnorm`` and ``sample``) translate easily to 
+similar functions in Python. This has likely to do with R's internal 
+implementation for these functions. Using random number primitives from 
+SyncRNG directly is therefore generally more reliable. See the examples below 
+for sampling and generating normally distributed values with SyncRNG.
+
 
 ## Examples
 
@@ -157,9 +165,7 @@ Python:
 Sampling with replacement requires us to generate a random index for the 
 array. Note that these values are not (necessarily) the same as what is 
 returned from R's ``sample`` function, even if we specify SyncRNG as the 
-user-defined RNG (see above). This has likely to do with R's internals for 
-sampling. Using random number primitives from SyncRNG directly is therefore 
-generally more reliable.
+user-defined RNG (see above).
 
 R:
 ```r
@@ -229,7 +235,7 @@ syncrng.box.muller <- function(mu, sigma, n, seed=0, rng=NULL)
     return(out[1:n]);
 }
 
-> syncrng_box_muller(1.0, 3.0, 11, seed=123)
+> syncrng.box.muller(1.0, 3.0, 11, seed=123)
  [1]  9.6062905  1.4132851  1.0223211  1.7554504 13.5366881  1.0793818
  [7]  2.5734537  1.1689116  0.5588834 -6.1701509  3.2221119
 ```
