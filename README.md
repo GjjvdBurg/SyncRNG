@@ -6,22 +6,55 @@
 [![PyPI version](https://badge.fury.io/py/SyncRNG.svg)](https://pypi.org/project/SyncRNG)
 [![Python package downloads](https://pepy.tech/badge/SyncRNG)](https://pepy.tech/project/SyncRNG)
 
-Generate the same random numbers in R and Python.
+*Generate the same random numbers in R and Python.*
 
-## Why?
+**Useful Links:**
 
-This program was created because it was desired to have the same random 
-numbers in both R and Python programs. Although both languages implement a 
+- [SyncRNG on GitHub](https://github.com/GjjvdBurg/SyncRNG)
+- [SyncRNG on PyPI](https://pypi.org/project/SyncRNG/)
+- [SyncRNG on CRAN](https://cran.r-project.org/web/packages/SyncRNG/index.html)
+- [Blog post on SyncRNG](https://gertjanvandenburg.com/blog/syncrng/)
+
+*Contents:* <a href="#introduction"><b>Introduction</b></a> | <a 
+href="#installation"><b>Installation</b></a> | <a 
+href="#usage"><b>Usage</b></a> | <a href="#r-user-defined-rng">R: User defined 
+RNG</a> | <a href="#functionality">Functionality</a> | <a 
+href="#examples"><b>Examples</b></a> | <a 
+href="sampling-without-replacement">Sampling without replacement</a> | <a 
+href="sampling-with-replacement">Sampling with replacement</a> | <a 
+href="generating-normally-distributed-values">Generating Normally Distributed 
+Values</a> | <a href="creating-the-same-traintest-splits">Creating the same 
+train/test splits</a> | <a href="#notes"><b>Notes</b></a>
+
+## Introduction
+
+I created this package because I needed to have the same random numbers in 
+both R and Python programs. Although both languages implement a 
 Mersenne-Twister random number generator (RNG), the implementations are so 
 different that it is not possible to get the same random numbers, even with 
 the same seed.
 
 SyncRNG is a "Tausworthe" RNG implemented in C and linked to both R and 
 Python. Since both use the same underlying C code, the random numbers will be 
-the same in both languages when the same seed is used.
+the same in both languages when the same seed is used. A [Tausworthe 
+generator](https://en.wikipedia.org/wiki/List_of_random_number_generators#Pseudorandom_number_generators_(PRNGs)) 
+is based on a linear feedback shift register and relatively easy to implement.
 
 You can read more about my motivations for creating this 
 [here](https://gertjanvandenburg.com/blog/syncrng/).
+
+If you use SyncRNG in your work, please consider citing it. Here is a BibTeX 
+entry you can use:
+
+```bibtex
+@misc{vandenburg2015syncrng,
+  author={{Van den Burg}, G. J. J.},
+  title={{SyncRNG}: Synchronised Random Numbers in {R} and {Python}},
+  url={https://github.com/GjjvdBurg/SyncRNG},
+  year={2015},
+  note={Version 1.3}
+}
+```
 
 ## Installation
 
@@ -65,8 +98,8 @@ You'll notice that the random numbers are indeed the same.
 ### R: User defined RNG
 
 R allows the user to define a custom random number generator, which is then 
-used for the common ``runif`` and ``rnorm`` functions in R. This has also been 
-implemented in SyncRNG as of version 1.3.0. To enable this, run:
+used for the common ``runif`` function in R. This has also been implemented in 
+SyncRNG as of version 1.3.0. To enable this, run:
 
 ```r
 > library(SyncRNG)
@@ -90,7 +123,156 @@ class:
 
 Functionality is deliberately kept minimal to make maintaining this library 
 easier. It is straightforward to build more advanced applications on the 
-existing methods, as the following example shows.
+existing methods, as the following examples shows.
+
+## Examples
+
+### Sampling without replacement
+
+Sampling without replacement can be done by leveraging the builtin ``shuffle`` 
+method of SyncRNG:
+
+R:
+```r
+> library(SyncRNG)
+> v <- 1:10
+> s <- SyncRNG(seed=42)
+> # Sample 5 values without replacement
+> s$shuffle(v)[1:5]
+[1] 6 9 2 4 5
+```
+
+Python:
+```python
+>>> from SyncRNG import SyncRNG
+>>> v = list(range(1, 11))
+>>> s = SyncRNG(seed=42)
+>>> # Sample 5 values without replacement
+>>> s.shuffle(v)[:5]
+[6, 9, 2, 4, 5]
+```
+
+### Sampling with replacement
+
+Sampling with replacement requires us to generate a random index for the 
+array. Note that these values are not (necessarily) the same as what is 
+returned from R's ``sample`` function, even if we specify SyncRNG as the 
+user-defined RNG (see above). This has likely to do with R's internals for 
+sampling. Using random number primitives from SyncRNG directly is therefore 
+generally more reliable.
+
+R:
+```r
+> library(SyncRNG)
+> v <- 1:10
+> s <- SyncRNG(seed=42)
+> u <- NULL
+> # Sample 15 values with replacement
+> for (k in 1:15) {
++ idx <- s$randi() %% length(v) + 1
++ u <- c(u, v[idx])
++ }
+> u
+[1] 10  1  1  9  3 10 10 10  9  4  1  9  6  3  6
+```
+
+Python:
+```python
+>>> from SyncRNG import SyncRNG
+>>> v = list(range(1, 11))
+>>> s = SyncRNG(seed=42)
+>>> u = []
+>>> for k in range(15):
+...     idx = s.randi() % len(v)
+...     u.append(v[idx])
+...
+>>> u
+[10, 1, 1, 9, 3, 10, 10, 10, 9, 4, 1, 9, 6, 3, 6]
+```
+
+### Generating Normally Distributed Values
+
+It is also straightforward to implement a [Box-Muller 
+transform](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform) to 
+generate normally distributed samples.
+
+R:
+
+```r
+library(SyncRNG)
+
+# Generate n numbers from N(mu, sigma^2)
+syncrng.box.muller <- function(mu, sigma, n, seed=0, rng=NULL)
+{
+    if (is.null(rng)) {
+        rng <- SyncRNG(seed=seed)
+    }
+
+    two.pi <- 2 * pi
+    ngen <- ceiling(n / 2)
+    out <- replicate(2 * ngen, 0.0)
+
+    for (i in 1:ngen) {
+        u1 <- 0.0
+        u2 <- 0.0
+
+        while (u1 == 0) { u1 <- rng$rand(); }
+        while (u2 == 0) { u2 <- rng$rand(); }
+
+        mag <- sigma * sqrt(-2.0 * log(u1))
+        z0 <- mag * cos(two.pi * u2) + mu
+        z1 <- mag * sin(two.pi * u2) + mu
+
+        out[2*i - 1] = z0;
+        out[2*i] = z1;
+    }
+    return(out[1:n]);
+}
+
+> syncrng_box_muller(1.0, 3.0, 11, seed=123)
+ [1]  9.6062905  1.4132851  1.0223211  1.7554504 13.5366881  1.0793818
+ [7]  2.5734537  1.1689116  0.5588834 -6.1701509  3.2221119
+```
+
+Python:
+
+```python
+import math
+from SyncRNG import SyncRNG
+
+def syncrng_box_muller(mu, sigma, n, seed=0, rng=None):
+    """Generate n numbers from N(mu, sigma^2)"""
+    rng = SyncRNG(seed=seed) if rng is None else rng
+
+    two_pi = 2 * math.pi
+    ngen = math.ceil(n / 2)
+    out = [0.0] * 2 * ngen
+
+    for i in range(ngen):
+        u1 = 0.0
+        u2 = 0.0
+
+        while u1 == 0:
+            u1 = rng.rand()
+        while u2 == 0:
+            u2 = rng.rand()
+
+        mag = sigma * math.sqrt(-2.0 * math.log(u1))
+        z0 = mag * math.cos(two_pi * u2) + mu
+        z1 = mag * math.sin(two_pi * u2) + mu
+
+        out[2*i] = z0
+        out[2*i + 1] = z1
+
+    return out[:n]
+
+>>> syncrng_box_muller(1.0, 3.0, 11, seed=123)
+[9.60629048280169, 1.4132850614143178, 1.0223211130311138, 1.7554504380249232, 
+13.536688052073458, 1.0793818230927306, 2.5734537321359925, 
+1.1689116061110083, 0.5588834007200677, -6.1701508943037195, 
+3.2221118937024342]
+```
+
 
 ### Creating the same train/test splits
 
@@ -98,8 +280,7 @@ A common use case for this package is to create the same train and test splits
 in R and Python. Below are some code examples that illustrate how to do this. 
 Both assume you have a matrix ``X`` with `100` rows.
 
-In R:
-
+R:
 ```r
 
 # This function creates a list with train and test indices for each fold
@@ -142,8 +323,7 @@ for (f in 1:folds$num.folds) {
 }
 ```
 
-And in Python:
-
+Python:
 ```python
 def k_fold(n, K, shuffle=True, seed=0):
     """Generator for train and test indices"""
@@ -180,8 +360,6 @@ for trainidx, testidx in kf:
 The random numbers are uniformly distributed on ``[0, 2^32 - 1]``. No 
 attention has been paid to thread-safety and you shouldn't use this random 
 number generator for cryptographic applications.
-
-## Questions and Issues
 
 If you have questions, comments, or suggestions about SyncRNG or you encounter 
 a problem, please open an issue [on 
