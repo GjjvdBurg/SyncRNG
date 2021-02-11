@@ -109,7 +109,7 @@ class:
 
 Functionality is deliberately kept minimal to make maintaining this library 
 easier. It is straightforward to build more advanced applications on the 
-existing methods, as the following examples shows.
+existing methods, as the examples below show.
 
 ### R: User defined RNG
 
@@ -132,8 +132,10 @@ implementation for these functions. Using random number primitives from
 SyncRNG directly is therefore generally more reliable. See the examples below 
 for sampling and generating normally distributed values with SyncRNG.
 
-
 ## Examples
+
+This section contains several examples of functionality that can easily be 
+built on top of the primitives that SyncRNG provides.
 
 ### Sampling without replacement
 
@@ -162,10 +164,10 @@ Python:
 
 ### Sampling with replacement
 
-Sampling with replacement requires us to generate a random index for the 
-array. Note that these values are not (necessarily) the same as what is 
-returned from R's ``sample`` function, even if we specify SyncRNG as the 
-user-defined RNG (see above).
+Sampling with replacement simply means generating random array indices. Note 
+that these values are not (necessarily) the same as what is returned from R's 
+``sample`` function, even if we specify SyncRNG as the user-defined RNG (see 
+above).
 
 R:
 ```r
@@ -203,7 +205,6 @@ transform](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform) to
 generate normally distributed samples.
 
 R:
-
 ```r
 library(SyncRNG)
 
@@ -241,7 +242,6 @@ syncrng.box.muller <- function(mu, sigma, n, seed=0, rng=NULL)
 ```
 
 Python:
-
 ```python
 import math
 from SyncRNG import SyncRNG
