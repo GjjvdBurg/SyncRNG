@@ -27,7 +27,7 @@ jobs:
         run: |
           install.packages('remotes')
           remotes::install_deps(pkgdir='./R/', dependencies=T)
-          remotes::install_cran('testthat')
+          remotes::install_cran('testthat', force=T)
         shell: Rscript {0}
 
       - name: Build
