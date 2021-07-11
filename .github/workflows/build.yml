@@ -23,17 +23,17 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
 
-      - name: Install R dependencies (2)
+      - name: Install R dependency: testthat
         run: |
           install.packages('testthat', type="source", force=T)
         shell: Rscript {0}
 
-      - name: Install R dependencies (1)
+      - name: Install R dependency: remotes
         run: |
           install.packages('remotes')
         shell: Rscript {0}
 
-      - name: Install R dependencies (4)
+      - name: Install R package dependencies
         run: |
           remotes::install_deps(pkgdir='./R/', dependencies=T)
         shell: Rscript {0}
