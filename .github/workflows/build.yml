@@ -25,7 +25,21 @@ jobs:
 
       - name: Install R dependencies (1)
         run: |
-          install.packages(c('remotes', 'testthat'))
+          install.packages('remotes')
+        shell: Rscript {0}
+
+      - name: Install R dependencies (2)
+        run: |
+          install.packages('devtools')
+        shell: Rscript {0}
+
+      - name: Install R dependencies (3)
+        run: |
+          devtools::install_github("r-lib/testthat")
+        shell: Rscript {0}
+
+      - name: Install R dependencies (4)
+        run: |
           remotes::install_deps(pkgdir='./R/', dependencies=T)
         shell: Rscript {0}
 
