@@ -23,11 +23,6 @@ jobs:
         with:
           r-version: ${{ matrix.R }}
 
-      - name: Install R dependencies (1)
-        run: |
-          install.packages('remotes')
-        shell: Rscript {0}
-
       - name: Install R dependencies (2)
         run: |
           install.packages('devtools')
@@ -36,6 +31,11 @@ jobs:
       - name: Install R dependencies (3)
         run: |
           devtools::install_github("r-lib/testthat")
+        shell: Rscript {0}
+
+      - name: Install R dependencies (1)
+        run: |
+          install.packages('remotes')
         shell: Rscript {0}
 
       - name: Install R dependencies (4)
