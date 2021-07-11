@@ -37,7 +37,7 @@ jobs:
 
       - name: Install R dependencies (3)
         run: |
-          remotes::install_cran('testthat', force=T)
+          remotes::install_cran('testthat', type="source", force=T)
         shell: Rscript {0}
 
       - name: Build
