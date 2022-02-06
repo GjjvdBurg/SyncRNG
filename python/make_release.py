@@ -112,9 +112,13 @@ class UpdateChangelog(Step):
 
 class UpdateReadme(Step):
     def action(self, context):
-        self.instruct("Update readme if necessary")
+        self.instruct("Update readme if necessary (check for version update)")
         self.print_run("vi README.md")
 
+class UpdateCitation(Step):
+    def action(self, context):
+        self.instruct("Update citation file if necessary (version and date)")
+        self.print_run("vi ../CITATION.cff")
 
 class CopyFile(Step):
     def __init__(self, source, target):
@@ -240,12 +244,13 @@ def main(target=None):
         ("ci2", WaitForCI()),
         ("changelog", UpdateChangelog()),
         ("readme", UpdateReadme()),
+        ("citation", UpdateCitation()),
         ("install", InstallFromTestPyPI()),
         ("testpkg", TestPackage()),
         ("remove_venv", RemoveVenv()),
         ("addrelease", GitAddRelease()),
         ("tagfinal", GitTagVersion()),
-        # triggers Travis to build with cibw and push to PyPI
+        # triggers CI to build with cibw and push to PyPI
         ("push3", PushToGitHub()),
         ("ci3", WaitForCI()),
     ]
