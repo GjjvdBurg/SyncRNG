@@ -4,7 +4,7 @@ authors:
 - family-names: "van den Burg"
   given-names: "Gerrit J.J."
   orcid: "https://orcid.org/0000-0001-5439-6248"
-title: "SyncRNG: Generate the same random numbers in R and Python"
-version: 1.3.2
+title: "SyncRNG: Synchronized Random Numbers in R and Python"
+version: 1.3.3
 date-released: 2022-02-06
 url: "https://github.com/GjjvdBurg/SyncRNG"
