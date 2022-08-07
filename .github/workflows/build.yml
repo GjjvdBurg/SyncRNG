@@ -12,7 +12,7 @@ on:
 
 jobs:
   R-test:
-    name: [R] unit tests
+    name: R unit tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -46,7 +46,7 @@ jobs:
         run: make test_R
 
   R-test-ubsan:
-    name: [R] unit tests with sanitizers (${{ matrix.compiler }})
+    name: R unit tests with sanitizers (${{ matrix.compiler }})
     runs-on: ubuntu-latest
     container: wch1/r-debug
     strategy:
@@ -81,7 +81,7 @@ jobs:
           exit ${exit_code}
 
   python-test:
-    name: [Python] unit tests
+    name: Python unit tests
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
