@@ -76,6 +76,8 @@ jobs:
           exit_code=0
           RDscript${{ matrix.sanitizer }} testthat.R >> tests.log 2>&1 || exit_code=-1
           cat ./tests.log
+          (! grep -q 'undefined-behavior' tests.log)
+          exit_code=$?
           exit ${exit_code}
 
   python-test:
