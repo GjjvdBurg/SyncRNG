@@ -206,10 +206,12 @@ double *user_unif_rand()
 Int32 _unscramble(Int32 scram)
 {
 	int j;
+	uint32_t temp = scram;
+	uint32_t mmi = 2783094533;
 	for (j=0; j<50; j++) {
-		scram = ((scram - 1) * 2783094533);
+		temp = ((temp - 1) * mmi);
 	}
-	return scram;
+	return ((Int32) temp);
 }
 
 // note that Int32 is "unsigned int" which is not necessarily 32 bit
