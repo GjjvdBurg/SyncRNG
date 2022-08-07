@@ -41,6 +41,39 @@ jobs:
       - name: Build
         run: make test_R
 
+  R-test-ubsan:
+    name: Unit tests with sanitizer (ubuntu-latest, R-devel, ${{ matrix.compiler }} ASAN/UBSAN)
+    runs-on: ubuntu-latest
+    container: wch1/r-debug
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - sanitizer: san
+            compiler: gcc
+          - sanitizer: csan
+            compiler: clang
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install packages
+        shell: bash
+        run: |
+          cd R
+          RDscript${{ matrix.sanitizer }} -e "install.packages(c('testthat'))"
+          RD${{ matrix.sanitizer }} CMD build .
+          RD${{ matrix.sanitizer }} CMD INSTALL SyncRNG_*.tar.gz || exit -1
+
+      - name: Run tests with sanitizer
+        shell: bash
+        run: |
+          cd R/tests
+          exit_code=0
+          RDscript${{ matrix.sanitizer }} testthat.R >> tests.log 2>&1 || exit_code=-1
+          cat ./tests.log
+          exit ${exit_code}
+
   python-test:
     name: Unit tests for Python package
     runs-on: ${{ matrix.os }}
