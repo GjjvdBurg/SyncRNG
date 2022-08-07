@@ -207,8 +207,9 @@ Int32 _unscramble(Int32 scram)
 {
 	int j;
 	uint32_t temp = scram;
+	uint32_t mmi = 2783094533;
 	for (j=0; j<50; j++) {
-		temp = ((temp - 1) * 2783094533);
+		temp = ((temp - 1) * mmi);
 	}
 	return ((Int32) temp);
 }
