@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 cran-comments.md
 Makefile
+tests/tests.log
+tests/__pycache__
