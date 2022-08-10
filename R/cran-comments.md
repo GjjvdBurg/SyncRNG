@@ -5,3 +5,6 @@
 
 ## R CMD check results
 There were no ERRORs, WARNINGs, or NOTEs.
+
+## Other
+Removed unnecessary files from source package.
