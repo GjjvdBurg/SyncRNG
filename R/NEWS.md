@@ -1,3 +1,7 @@
+# SyncRNG 1.3.2
+
+* Enforce strict prototypes in C code.
+
 # SyncRNG 1.3.1
 
 * Fix error with `unsigned int` when using clang compiler with UBSAN checks.
