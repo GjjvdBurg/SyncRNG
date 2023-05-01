@@ -4,7 +4,4 @@
 * wch1/r-debug docker image (ubuntu/devel) with clang asan/ubsan
 
 ## R CMD check results
-There were no ERRORs, WARNINGs, or NOTEs.
-
-## Other
-Removed unnecessary files from source package.
+There were no meaningful ERRORs, WARNINGs, or NOTEs.

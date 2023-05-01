@@ -189,7 +189,7 @@ static double global_R_result_uniform;
 static double global_R_result_normal;
 static uint64_t *global_R_state = NULL;
 
-double *user_unif_rand()
+double *user_unif_rand(void)
 {
 	if (global_R_state == NULL) {
 		// if it's not seeded yet we seed it with 0
@@ -228,17 +228,17 @@ void user_unif_init(Int32 seed_in)
 	lfsr113_seed(useed, &global_R_state);
 }
 
-int *user_unif_nseed()
+int *user_unif_nseed(void)
 {
 	return &global_R_nseed;
 }
 
-int *user_unif_seedloc()
+int *user_unif_seedloc(void)
 {
 	return (int *) &global_R_seed;
 }
 
-double *user_norm_rand()
+double *user_norm_rand(void)
 {
 	double u, v, z, x;
 	do {
