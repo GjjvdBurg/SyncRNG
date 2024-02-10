@@ -2,6 +2,7 @@
 % Please edit documentation in R/syncrng-package.R
 \docType{package}
 \name{syncrng-package}
+\alias{SyncRNG-package}
 \alias{syncrng-package}
 \title{SyncRNG - Synchronized Random Numbers in R and Python}
 \description{
@@ -50,3 +51,4 @@ URL: \url{https://github.com/GjjvdBurg/SyncRNG}
 Gerrit J.J. van den Burg\cr
 Maintainer: Gerrit J.J. van den Burg <gertjanvandenburg@gmail.com>
 }
+\keyword{internal}

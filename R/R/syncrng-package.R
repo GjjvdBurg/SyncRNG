@@ -1,5 +1,5 @@
 #' @title SyncRNG - Synchronized Random Numbers in R and Python
-#' 
+#'
 #' @description 
 #' The SyncRNG package provides a random number generator implemented in C and 
 #' linked to both R and Python. This way, you can generate the same random 
@@ -44,7 +44,6 @@
 #' # [1] 6.257184e-05
 #'
 #' @name syncrng-package
-#' @docType package
 #' @import methods
-NULL
-#>NULL
+#' @keywords internal
+"_PACKAGE"
