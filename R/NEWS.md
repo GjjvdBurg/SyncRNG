@@ -1,3 +1,7 @@
+# SyncRNG 1.3.3
+
+* Resolve invalid package alias in Rd file
+
 # SyncRNG 1.3.2
 
 * Enforce strict prototypes in C code.
