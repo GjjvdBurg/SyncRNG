@@ -58,6 +58,14 @@ jobs:
     runs-on: ubuntu-latest
     # upload to PyPI on every tag starting with 'v'
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v') && contains(github.event.ref, '-rc.')
+
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/SyncRNG
+
+    permissions:
+      id-token: write # IMPORTANT: mandatory for trusted publishing
+
     steps:
       - name: Download all the dists
         uses: actions/download-artifact@v4
@@ -77,6 +85,14 @@ jobs:
     runs-on: ubuntu-latest
     # upload to PyPI on tags starting with 'v' that don't contain '-rc.'
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v') && !contains(github.event.ref, '-rc.')
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/SyncRNG
+
+    permissions:
+      id-token: write
+
     steps:
       - name: Download all the dists
         uses: actions/download-artifact@v4
