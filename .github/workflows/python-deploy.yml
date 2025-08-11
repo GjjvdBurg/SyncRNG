@@ -14,12 +14,12 @@ jobs:
         os: [ubuntu-20.04, windows-2019, macos-10.15]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.8'
+          python-version: '3.10'
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.3
@@ -29,27 +29,29 @@ jobs:
         with:
           package-dir: ./python
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
+          name: dist-${{ matrix.os }}-${{ matrix.python-version }}
 
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.8'
+          python-version: '3.10'
 
       - name: Build sdist
         run: cd python && python setup.py sdist
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           path: python/dist/*.tar.gz
+          name: dist-source
 
   upload_testpypi:
     needs: [build_wheels, build_sdist]
@@ -57,16 +59,17 @@ jobs:
     # upload to PyPI on every tag starting with 'v'
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v') && contains(github.event.ref, '-rc.')
     steps:
-      - uses: actions/download-artifact@v4.1.7
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
         with:
-          name: artifact
-          path: dist
+          pattern: dist-*
+          merge-multiple: true
+          path: dist/
 
-      - uses: pypa/gh-action-pypi-publish@master
+      - name: Publish distribution to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
           verbose: true
 
   upload_pypi:
@@ -75,13 +78,14 @@ jobs:
     # upload to PyPI on tags starting with 'v' that don't contain '-rc.'
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v') && !contains(github.event.ref, '-rc.')
     steps:
-      - uses: actions/download-artifact@v4.1.7
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
         with:
-          name: artifact
-          path: dist
+          pattern: dist-*
+          merge-multiple: true
+          path: dist/
 
-      - uses: pypa/gh-action-pypi-publish@master
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
           verbose: true
