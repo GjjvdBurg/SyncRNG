@@ -1,5 +1,9 @@
 # Change log
 
+## Version 1.3.4
+
+* [Python] Bump version to build new Python wheels
+
 ## Version 1.3.3
 
 * [Python] Bump version to build Python 3.10 wheels
